@@ -42,7 +42,7 @@ public class HashMapDictionary {
 		
 		for(String string : URI_to_ID.keySet()) {
 			writer.write(string + " --> " + URI_to_ID.get(string)+"\n");
-			System.out.println(string + " --> " + URI_to_ID.get(string));
+			//System.out.println(string + " --> " + URI_to_ID.get(string));
 		}
 		writer.close();
 	}
