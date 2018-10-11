@@ -10,29 +10,27 @@ import java.util.ArrayList;
 
 public class Requester {
 
+	public static HashMapDictionary daDico;
+
+	public static ArrayList<ArrayList<String>> tripleData;
+	public static ArrayList<String> fullData;
+
+	public static String stringFile;
+
 	public static void main(String[] args) throws IOException {
-		
-		
-//		File file = new File("data/watdiv-mini-projet/testsuite/dataset/100K.rdf");
-//		BufferedReader br = new BufferedReader(new FileReader(file));
-//		String line;
-//		while ((line = br.readLine()) != null) {
-//		   System.out.println(line);
-//		}
-//		br.close();
-		
+
 		RDFParser parser = new RDFParser();
-		ArrayList<ArrayList<String>> tripleData = new ArrayList<>();
-		ArrayList<String> fullData = new ArrayList<>();
-		tripleData = parser.parseFile("data/watdiv-mini-projet/data_RDFXML/100K.rdfxml");
-		
-		for(int index = 0 ; index < tripleData.size() ; index++) {
-			for(String string : tripleData.get(index)) {
+		tripleData = new ArrayList<>();
+		fullData = new ArrayList<>();
+		stringFile = "data/watdiv-mini-projet/data_RDFXML/100K.rdfxml";
+
+		tripleData = parser.parseFile(stringFile);
+
+		for (int index = 0; index < tripleData.size(); index++)
+			for (String string : tripleData.get(index))
 				fullData.add(string);
-			}
-		}
-		
-		HashMapDictionary daDico = new HashMapDictionary(fullData);
+
+		daDico = new HashMapDictionary(fullData);
 		daDico.showDico();
 	}
 }
