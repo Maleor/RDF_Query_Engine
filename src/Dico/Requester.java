@@ -16,13 +16,18 @@ public class Requester {
 	public static ArrayList<String> fullData;
 
 	public static String stringFile;
+	public static RDFRawParser parser;
+	
+	public static void initRequester() {
+		parser = new RDFRawParser();
+		tripleData = new ArrayList<>();
+		fullData = new ArrayList<>();
+		stringFile = "data/data_RDFXML/100K.rdfxml";
+	}
 
 	public static void main(String[] args) throws IOException {
 
-		RDFParser parser = new RDFParser();
-		tripleData = new ArrayList<>();
-		fullData = new ArrayList<>();
-		stringFile = "data/watdiv-mini-projet/data_RDFXML/100K.rdfxml";
+		initRequester();
 
 		tripleData = parser.parseFile(stringFile);
 
