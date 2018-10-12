@@ -21,6 +21,9 @@ public class Requester {
 
 	public static String stringFile;
 	public static RDFRawParser parser;
+	
+	public static ThreeValues_Index POS;
+	public static ThreeValues_Index OPS;
 
 	public static void initRequester() {
 		parser = new RDFRawParser();
@@ -44,13 +47,21 @@ public class Requester {
 		
 		t1 = Instant.now();
 		daDico = new HashMapDictionary(fullData); /* creates the dictionary from the list of URI */
-		System.out.println("Creation du dictionnaire : " + Duration.between(t1, Instant.now()).toMillis());
-		//daDico.showDico();
+		System.out.println("Creation of the dictionary : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		System.out.println("Size of the dictionary : " + daDico.getSize());
+		daDico.showDico();
 		
-		ThreeValues_Index OPS = new ThreeValues_Index(daDico, tripleData, INDEX_TYPE.POS);
+		OPS = new ThreeValues_Index(daDico, tripleData, INDEX_TYPE.OPS);
 		t1 = Instant.now();
 		OPS.IndexBuilder();
-		System.out.println("Initialisation de l'index OPS : " + Duration.between(t1, Instant.now()).toMillis());
+		System.out.println("Initialization of the OPS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
 		OPS.showIndex();
+		
+		
+		POS = new ThreeValues_Index(daDico, tripleData, INDEX_TYPE.POS);
+		t1 = Instant.now();
+		POS.IndexBuilder();
+		System.out.println("Initialization of the POS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		POS.showIndex();
 	}
 }

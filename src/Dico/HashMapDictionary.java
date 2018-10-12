@@ -47,4 +47,8 @@ public class HashMapDictionary {
 		writer.close();
 	}
 	
+	public int getSize() {
+		return URI_to_ID.size();
+	}
+	
 }

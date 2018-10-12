@@ -72,7 +72,7 @@ public final class RDFRawParser {
 			reader.close();
 		} catch (IOException e) {
 		}
-		System.out.println("Parsing des données : " + Duration.between(t1, Instant.now()).toMillis());
+		System.out.println("Parsing of the data : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
 		ArrayList<ArrayList<String>> datas = new ArrayList<>();
 
 		for (int index = 0; index < 3; index++)
