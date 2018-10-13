@@ -10,58 +10,89 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 
-import Dico.ThreeValues_Index.INDEX_TYPE;
+import Dico.ThreeURI_Index.INDEX_TYPE;
 
+
+/**
+ * 
+ * @author Mathieu Dodard
+ * @author Quentin Monod
+ *
+ */
 public class Requester {
 
-	public static HashMapDictionary daDico;
+	private static HashMapDictionary daDico;
 
-	public static ArrayList<ArrayList<String>> tripleData;
-	public static ArrayList<String> fullData;
+	private static ArrayList<ArrayList<String>> tripleData;
+	private static ArrayList<String> fullData;
 
-	public static String stringFile;
-	public static RDFRawParser parser;
+	private static String stringFile;
 	
-	public static ThreeValues_Index POS;
-	public static ThreeValues_Index OPS;
+	private static int numberOfTriples;
+	
+	private static RDFRawParser parser;
+	
+	private static ThreeURI_Index POS;
+	private static ThreeURI_Index OPS;
 
-	public static void initRequester() {
+	private static SingleURI_Selectivity o_frequency;
+	private static SingleURI_Selectivity p_frequency;
+	
+	private static void initRequester() {
 		parser = new RDFRawParser();
 		tripleData = new ArrayList<>();
 		fullData = new ArrayList<>();
 		stringFile = "data/data_RDFXML/500K.rdfxml";
 	}
 
+	private static void initData() throws FileNotFoundException {
+		tripleData = parser.parseFile(stringFile); /* creates a list of 3 lists (subjects, predicates and objects ) from the given file */
+		numberOfTriples = tripleData.get(0).size();
+
+		for (int index = 0; index < tripleData.size(); index++)
+			for (String string : tripleData.get(index))
+				fullData.add(string); /* creates a list that contains all the URI */
+	}
+	
+	
 	/*******************/
 	/** MAIN FUNCTION **/
 	/*******************/
 	public static void main(String[] args) throws IOException {
 		Instant t1;
 		initRequester();
-
-		tripleData = parser.parseFile(stringFile); /* creates a list of 3 lists (subjects, predicates and objects ) from the given file */
-
-		for (int index = 0; index < tripleData.size(); index++)
-			for (String string : tripleData.get(index))
-				fullData.add(string); /* creates a list that contains all the URI */
+		initData();
+		
 		
 		t1 = Instant.now();
 		daDico = new HashMapDictionary(fullData); /* creates the dictionary from the list of URI */
-		System.out.println("Creation of the dictionary : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		System.out.println("Creation of the dictionary : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
 		System.out.println("Size of the dictionary : " + daDico.getSize());
 		daDico.showDico();
 		
-		OPS = new ThreeValues_Index(daDico, tripleData, INDEX_TYPE.OPS);
+		OPS = new ThreeURI_Index(daDico, tripleData, INDEX_TYPE.OPS);
 		t1 = Instant.now();
 		OPS.IndexBuilder();
-		System.out.println("Initialization of the OPS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		System.out.println("Initialization of the OPS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
 		OPS.showIndex();
 		
-		
-		POS = new ThreeValues_Index(daDico, tripleData, INDEX_TYPE.POS);
+		o_frequency = new SingleURI_Selectivity(OPS);
+		t1 = Instant.now();
+		o_frequency.ComputeSelectivity(numberOfTriples);
+		System.out.println("Initialization of the objects frequency index : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
+		o_frequency.Show_URI_Selectivity("objects");
+
+			
+		POS = new ThreeURI_Index(daDico, tripleData, INDEX_TYPE.POS);
 		t1 = Instant.now();
 		POS.IndexBuilder();
-		System.out.println("Initialization of the POS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		System.out.println("Initialization of the POS index : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
 		POS.showIndex();
+		
+		p_frequency = new SingleURI_Selectivity(POS);
+		t1 = Instant.now();
+		p_frequency.ComputeSelectivity(numberOfTriples);
+		System.out.println("Initialization of the predicates frequency index : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
+		p_frequency.Show_URI_Selectivity("predicates");
 	}
 }

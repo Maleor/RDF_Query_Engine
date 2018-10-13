@@ -15,12 +15,18 @@ import org.openrdf.rio.RDFFormat;
 import org.openrdf.rio.Rio;
 import org.openrdf.rio.helpers.RDFHandlerBase;
 
+/**
+ * 
+ * @author Mathieu Dodard
+ * @author Quentin Monod
+ *
+ */
 public final class RDFRawParser {
 
 	/**
 	 * 
-	 * Private class that handles the statements creating 3 lists with the data ( s
-	 * p o )
+	 * Private class that handles the statements creating 3 lists with the data, one
+	 * for the subjects, one for the predicates and one for the objects.
 	 *
 	 */
 	private static class RDFListener extends RDFHandlerBase {
@@ -30,16 +36,16 @@ public final class RDFRawParser {
 		public ArrayList<String> objects = new ArrayList<>();
 
 		/**
-		 * Takes the values in a triple and puts them in lists
+		 * Takes the values in a statement (triple) and puts them in lists
 		 * 
-		 * @param st
+		 * @param statement
 		 *            the statement you want to handle
 		 */
 		@Override
-		public void handleStatement(Statement st) {
-			subjects.add(st.getSubject().toString());
-			predicates.add(st.getPredicate().toString());
-			objects.add(st.getObject().toString());
+		public void handleStatement(Statement statement) {
+			subjects.add(statement.getSubject().toString());
+			predicates.add(statement.getPredicate().toString());
+			objects.add(statement.getObject().toString());
 		}
 
 	};
@@ -48,7 +54,7 @@ public final class RDFRawParser {
 	 * 
 	 * @param file
 	 *            The file you want to parse
-	 *            
+	 * 
 	 * @return A list of 3 lists that contains all the data
 	 * 
 	 * @throws FileNotFoundException
@@ -67,7 +73,7 @@ public final class RDFRawParser {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		try {
 			reader.close();
 		} catch (IOException e) {

@@ -15,11 +15,13 @@ import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
  * @author Quentin Monod
  *
  */
-public class ThreeValues_Index {
+public class ThreeURI_Index {
 
-	TreeMap<Integer, TreeMap<Integer, TreeSet<Integer>>> index;
-	ArrayList<ArrayList<String>> data;
-	HashMapDictionary dico;
+	public TreeMap<Integer, TreeMap<Integer, TreeSet<Integer>>> index;
+	
+	private ArrayList<ArrayList<String>> data;
+	
+	private HashMapDictionary dico;
 
 	public enum INDEX_TYPE {
 		POS, OPS, SPO
@@ -37,7 +39,7 @@ public class ThreeValues_Index {
 	 * @param type
 	 *            The order of the URI in the index (POS, OPS, ...)
 	 */
-	public ThreeValues_Index(HashMapDictionary dico, ArrayList<ArrayList<String>> data, INDEX_TYPE type) {
+	public ThreeURI_Index(HashMapDictionary dico, ArrayList<ArrayList<String>> data, INDEX_TYPE type) {
 		index = new TreeMap<>();
 		this.data = data;
 		this.type = type;
