@@ -37,7 +37,7 @@ public class SingleURI_Selectivity {
 	 * @param numberOfTriples
 	 *            The number of triples in your data
 	 * 
-	 * @return The frequency
+	 * @return The frequency of the given URI
 	 */
 	private Double computeFrequency(int key, int numberOfTriples) {
 		return ((double) data.index.get(key).keySet().size() / (double) numberOfTriples);

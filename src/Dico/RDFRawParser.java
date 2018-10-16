@@ -51,6 +51,7 @@ public final class RDFRawParser {
 	};
 
 	/**
+	 * Parses a file to get all the triples into an array list of 3 array lists
 	 * 
 	 * @param file
 	 *            The file you want to parse

@@ -47,7 +47,7 @@ public class ThreeURI_Index {
 	}
 
 	/**
-	 * Builds the index using the data you gave in the copnstructor
+	 * Builds the index using the data you gave in the constructor
 	 */
 	public void IndexBuilder() {
 
