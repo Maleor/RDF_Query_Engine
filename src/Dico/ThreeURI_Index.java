@@ -21,7 +21,7 @@ public class ThreeURI_Index {
 	
 	private ArrayList<ArrayList<String>> data;
 	
-	private HashMapDictionary dico;
+	private Dictionary dico;
 
 	public enum INDEX_TYPE {
 		POS, OPS, SPO
@@ -39,7 +39,7 @@ public class ThreeURI_Index {
 	 * @param type
 	 *            The order of the URI in the index (POS, OPS, ...)
 	 */
-	public ThreeURI_Index(HashMapDictionary dico, ArrayList<ArrayList<String>> data, INDEX_TYPE type) {
+	public ThreeURI_Index(Dictionary dico, ArrayList<ArrayList<String>> data, INDEX_TYPE type) {
 		index = new TreeMap<>();
 		this.data = data;
 		this.type = type;

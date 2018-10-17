@@ -20,7 +20,7 @@ import Dico.ThreeURI_Index.INDEX_TYPE;
  */
 public class Requester {
 
-	private static HashMapDictionary daDico;
+	private static Dictionary daDico;
 
 	private static ArrayList<ArrayList<String>> tripleData;
 	private static ArrayList<String> fullData;
@@ -77,7 +77,7 @@ public class Requester {
 		initData();
 
 		t1 = Instant.now();
-		daDico = new HashMapDictionary(fullData); /* creates the dictionary from the list of URI */
+		daDico = new Dictionary(fullData); /* creates the dictionary from the list of URI */
 		System.out.println("Creation of the dictionary : " + Duration.between(t1, Instant.now()).toMillis() + " ms\n");
 		System.out.println("Size of the dictionary : " + daDico.getSize());
 		daDico.showDico();
@@ -109,5 +109,14 @@ public class Requester {
 		System.out.println("Initialization of the predicates frequency index : "
 				+ Duration.between(t1, Instant.now()).toMillis() + " ms\n");
 		p_frequency.Show_URI_Selectivity("predicates");
+		
+		
+		QuerySet querySet = new QuerySet(daDico);
+		System.out.println("### Creation du query set ###");
+		
+		querySet.ParseQueryFile("data/testsuite/queries/Q_4_location_nationality_gender_type.queryset");
+		
+		querySet.showQuerySet();
+		
 	}
 }

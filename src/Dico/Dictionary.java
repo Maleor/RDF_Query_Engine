@@ -13,7 +13,7 @@ import java.util.TreeMap;
  * @author Quentin Monod
  *
  */
-public class HashMapDictionary {
+public class Dictionary {
 
 	private TreeMap<String, Integer> URI_to_ID;
 	private HashMap<Integer, String> ID_to_URI;
@@ -22,7 +22,7 @@ public class HashMapDictionary {
 	/** CONSTRUCTOR **/
 	///////////////////
 
-	public HashMapDictionary(ArrayList<String> toMap) {
+	public Dictionary(ArrayList<String> toMap) {
 
 		URI_to_ID = new TreeMap<>();
 		ID_to_URI = new HashMap<>();
