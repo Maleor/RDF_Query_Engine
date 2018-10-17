@@ -17,8 +17,9 @@ import Dictionary.Dictionary;
  */
 public class QuerySet {
 
-	ArrayList<Query> querySet;
-	Dictionary dico;
+	public ArrayList<Query> querySet;
+	
+	private Dictionary dico;
 
 	///////////////////
 	/** CONSTRUCTOR **/
@@ -80,6 +81,14 @@ public class QuerySet {
 			fw.write(query.showQuery() + "\n");
 
 		fw.close();
+	}
+	
+	public Query get(int index) {
+		return querySet.get(index);
+	}
+	
+	public int getSize() {
+		return querySet.size();
 	}
 
 }

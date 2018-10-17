@@ -2,6 +2,12 @@ package Requester;
 
 import java.io.IOException;
 
+/**
+ * 
+ * @author Mathieu Dodard
+ * @author Quentin Monod
+ *
+ */
 public class Runner {
 
 	/**

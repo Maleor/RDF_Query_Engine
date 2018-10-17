@@ -10,11 +10,14 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 
+import javax.management.Query;
+
 import DataParser.RDFRawParser;
 import Dictionary.Dictionary;
 import Index.SingleURI_Selectivity;
 import Index.ThreeURI_Index;
 import Index.ThreeURI_Index.INDEX_TYPE;
+import Query.QueryHandler;
 import Query.QuerySet;
 
 /**
@@ -25,7 +28,7 @@ import Query.QuerySet;
  */
 public class Requester {
 
-	public Dictionary daDico;
+	public Dictionary dictionary;
 
 	public ArrayList<ArrayList<String>> tripleData;
 	public ArrayList<String> fullData;
@@ -45,6 +48,8 @@ public class Requester {
 	public SingleURI_Selectivity p_frequency;
 
 	public QuerySet querySet;
+	
+	public QueryHandler queryHandler;
 
 	///////////////////
 	/** CONSTRUCTOR **/
@@ -81,31 +86,35 @@ public class Requester {
 	//////////////////////
 
 	/**
-	 * Executes
+	 * Initializes and executes the evaluation of the queries
 	 * 
-	 * @param args
-	 * @throws IOException
+	 * @throws IOException 
+	 * 
 	 */
-	public void run() throws IOException {
+	public void run() throws IOException{
 
 		initData();
-
-		daDico = new Dictionary(fullData);
-
-		querySet = new QuerySet(daDico);
-
-		querySet.ParseQueryFile(queryFile);
-
-		querySet.showQuerySet(outputPath);
-
+		dictionary = new Dictionary(fullData);		
+		initIndexes();
+		initQuerySet();	
+		
+		for(int index = 0 ; index < querySet.getSize() ; index++) queryHandler.getSolutions(querySet.get(index));
+		
 	}
 
-	public void initIndexes() {
+	public void initQuerySet() throws FileNotFoundException {
+		
+		querySet = new QuerySet(dictionary);
+		querySet.ParseQueryFile(queryFile);
+		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
+	}
+	
+	public void initIndexes() throws IOException {
 
-		OPS = new ThreeURI_Index(daDico, tripleData, INDEX_TYPE.OPS);
+		OPS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.OPS);
 		OPS.IndexBuilder();
 
-		POS = new ThreeURI_Index(daDico, tripleData, INDEX_TYPE.POS);
+		POS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.POS);
 		POS.IndexBuilder();
 
 		o_frequency = new SingleURI_Selectivity(OPS);

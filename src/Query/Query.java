@@ -1,8 +1,12 @@
 package Query;
 
 import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
+import java.util.concurrent.locks.Condition;
 
 import Dictionary.Dictionary;
+import Index.*;
 
 /**
  * 
@@ -12,9 +16,9 @@ import Dictionary.Dictionary;
  */
 public class Query {
 
-	ArrayList<Integer> answer;
-	ArrayList<Integer[]> conditions;
-	Dictionary dico;
+	public ArrayList<Integer> answer;
+	public ArrayList<Integer[]> conditions;
+	public Dictionary dico;
 
 	///////////////////
 	/** CONSTRUCTOR **/
@@ -22,18 +26,20 @@ public class Query {
 
 	public Query(StringBuilder query, Dictionary dico) {
 		conditions = new ArrayList<Integer[]>();
+		answer = new ArrayList<>();
 		this.dico = dico;
 		initConditions(query.toString());
 	}
 
-	//////////////////////
+	///////////////////////
 	/** PRIVATE METHODS **/
-	//////////////////////
-	
+	///////////////////////
+
 	/**
 	 * Gets the collection of conditions from a sparql query
 	 * 
-	 * @param query The sparql query from which you want to get the condtions
+	 * @param query
+	 *            The sparql query from which you want to get the condtions
 	 */
 	private void initConditions(String query) {
 
@@ -55,10 +61,13 @@ public class Query {
 		}
 	}
 
+	
+
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
-	
+
+
 	/**
 	 * Transforms the condition collection of the query into a full SPARQL query
 	 * 

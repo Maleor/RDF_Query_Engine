@@ -48,7 +48,7 @@ public class SingleURI_Selectivity {
 	//////////////////////
 
 	/**
-	 * Fills the hashmap with the frequency of each URI
+	 * Fills the hash map with the frequency of each URI
 	 * 
 	 * @param numberOfTriples
 	 *            The number of triples in your data
@@ -79,7 +79,7 @@ public class SingleURI_Selectivity {
 
 		FileWriter fw = new FileWriter(outputPath + "/" + objectFrequency + "Frequency");
 
-		for (int key : uri_selectivity.keySet()) 
+		for (int key : uri_selectivity.keySet())
 			fw.write(key + " -> " + uri_selectivity.get(key) + "\n");
 
 		fw.close();
