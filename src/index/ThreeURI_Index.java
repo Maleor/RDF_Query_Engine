@@ -1,15 +1,16 @@
-package Index;
+package index;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
-import Dictionary.Dictionary;
+import dictionary.Dictionary;
 
 /**
  * 
@@ -93,6 +94,18 @@ public class ThreeURI_Index {
 			break;
 
 		}
+	}
+	
+	public TreeMap<Integer, TreeSet<Integer>> get(Integer i){
+		return index.get(i);
+	}
+	
+	public int getSize() {
+		return index.size();
+	}
+	
+	public Set<Integer> getKeySet(){
+		return index.keySet();
 	}
 
 	/**

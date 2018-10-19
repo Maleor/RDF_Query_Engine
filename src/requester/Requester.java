@@ -1,4 +1,4 @@
-package Requester;
+package requester;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,13 +12,13 @@ import java.util.ArrayList;
 
 import javax.management.Query;
 
-import DataParser.RDFRawParser;
-import Dictionary.Dictionary;
-import Index.SingleURI_Selectivity;
-import Index.ThreeURI_Index;
-import Index.ThreeURI_Index.INDEX_TYPE;
-import Query.QueryHandler;
-import Query.QuerySet;
+import dataParser.RDFRawParser;
+import dictionary.Dictionary;
+import index.SingleURI_Selectivity;
+import index.ThreeURI_Index;
+import index.ThreeURI_Index.INDEX_TYPE;
+import query.QueryHandler;
+import query.QuerySet;
 
 /**
  * 
@@ -113,6 +113,7 @@ public class Requester {
 
 		OPS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.OPS);
 		OPS.IndexBuilder();
+		OPS.showIndex(outputPath);
 
 		POS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.POS);
 		POS.IndexBuilder();

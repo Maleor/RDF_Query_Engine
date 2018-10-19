@@ -1,4 +1,4 @@
-package DataParser;
+package dataParser;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;

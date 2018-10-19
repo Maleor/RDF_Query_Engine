@@ -1,8 +1,9 @@
-package Index;
+package index;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * 
@@ -40,7 +41,7 @@ public class SingleURI_Selectivity {
 	 * @return The frequency of the given URI
 	 */
 	private Double computeFrequency(int key, int numberOfTriples) {
-		return ((double) data.index.get(key).keySet().size() / (double) numberOfTriples);
+		return ((double) data.get(key).keySet().size() / (double) numberOfTriples);
 	}
 
 	//////////////////////
@@ -57,11 +58,25 @@ public class SingleURI_Selectivity {
 
 		Double frequency = 0.0;
 
-		for (int key : data.index.keySet()) {
+		for (int key : data.getKeySet()) {
 			frequency = computeFrequency(key, numberOfTriples);
 			uri_selectivity.put(key, frequency);
 
 		}
+	}
+	
+	public double get(Integer i) {
+		Double ret = 0.0;
+		
+		return uri_selectivity.get(i) == null ? ret : uri_selectivity.get(i);
+	}
+	
+	public int getSize() {
+		return uri_selectivity.size();
+	}
+	
+	public Set<Integer> getKeySet(){
+		return uri_selectivity.keySet();
 	}
 
 	/**

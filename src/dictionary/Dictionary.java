@@ -1,4 +1,4 @@
-package Dictionary;
+package dictionary;
 
 import java.io.FileWriter;
 import java.io.IOException;
