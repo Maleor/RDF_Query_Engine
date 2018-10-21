@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class SingleURI_Selectivity {
 
-	public HashMap<Integer, Double> uri_selectivity;
+	public HashMap<Integer, Double> uri_frequency;
 
 	private ThreeURI_Index data;
 
@@ -21,7 +21,7 @@ public class SingleURI_Selectivity {
 	/** CONSTRUCTOR **/
 	///////////////////
 	public SingleURI_Selectivity(ThreeURI_Index data) {
-		this.uri_selectivity = new HashMap<>();
+		this.uri_frequency = new HashMap<>();
 		this.data = data;
 	}
 
@@ -60,7 +60,7 @@ public class SingleURI_Selectivity {
 
 		for (int key : data.getKeySet()) {
 			frequency = computeFrequency(key, numberOfTriples);
-			uri_selectivity.put(key, frequency);
+			uri_frequency.put(key, frequency);
 
 		}
 	}
@@ -68,15 +68,15 @@ public class SingleURI_Selectivity {
 	public double get(Integer i) {
 		Double ret = 0.0;
 		
-		return uri_selectivity.get(i) == null ? ret : uri_selectivity.get(i);
+		return uri_frequency.get(i) == null ? ret : uri_frequency.get(i);
 	}
 	
 	public int getSize() {
-		return uri_selectivity.size();
+		return uri_frequency.size();
 	}
 	
 	public Set<Integer> getKeySet(){
-		return uri_selectivity.keySet();
+		return uri_frequency.keySet();
 	}
 
 	/**
@@ -94,8 +94,8 @@ public class SingleURI_Selectivity {
 
 		FileWriter fw = new FileWriter(outputPath + "/" + objectFrequency + "Frequency");
 
-		for (int key : uri_selectivity.keySet())
-			fw.write(key + " -> " + uri_selectivity.get(key) + "\n");
+		for (int key : uri_frequency.keySet())
+			fw.write(key + " -> " + uri_frequency.get(key) + "\n");
 
 		fw.close();
 	}

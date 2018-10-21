@@ -25,6 +25,8 @@ public class ThreeURI_Index {
 	private ArrayList<ArrayList<String>> data;
 
 	private Dictionary dico;
+	
+	private int nbTriple;
 
 	public enum INDEX_TYPE {
 		POS, OPS
@@ -54,7 +56,7 @@ public class ThreeURI_Index {
 	 */
 	public void IndexBuilder() {
 
-		int nbTriple = 0;
+		nbTriple = 0;
 		/*
 		 * to create an index we use a loop on the number of triples for each triple we
 		 * take the subject,the predicate and the object we translate them in integer
@@ -65,26 +67,26 @@ public class ThreeURI_Index {
 
 		case POS:
 			for (int jndex = 0; jndex < data.get(0).size(); jndex++) {
-				Integer obj = dico.getID(data.get(1).get(jndex));
-				Integer pred = dico.getID(data.get(0).get(jndex));
-				Integer subj = dico.getID(data.get(2).get(jndex));
-				index.putIfAbsent(obj, new TreeMap<>());
-				TreeMap<Integer, TreeSet<Integer>> objMap = index.get(obj);
-				objMap.putIfAbsent(pred, new TreeSet<>());
-				objMap.get(pred).add(subj);
+				Integer first = dico.getID(data.get(1).get(jndex));
+				Integer second = dico.getID(data.get(0).get(jndex));
+				Integer third = dico.getID(data.get(2).get(jndex));
+				index.putIfAbsent(first, new TreeMap<>());
+				TreeMap<Integer, TreeSet<Integer>> objMap = index.get(first);
+				objMap.putIfAbsent(second, new TreeSet<>());
+				objMap.get(second).add(third);
 				nbTriple++;
 			}
 			break;
 
 		case OPS:
 			for (int jndex = 0; jndex < data.get(0).size(); jndex++) {
-				Integer obj = dico.getID(data.get(0).get(jndex));
-				Integer pred = dico.getID(data.get(1).get(jndex));
-				Integer subj = dico.getID(data.get(2).get(jndex));
-				index.putIfAbsent(obj, new TreeMap<>());
-				TreeMap<Integer, TreeSet<Integer>> objMap = index.get(obj);
-				objMap.putIfAbsent(pred, new TreeSet<>());
-				objMap.get(pred).add(subj);
+				Integer first = dico.getID(data.get(2).get(jndex));
+				Integer second = dico.getID(data.get(1).get(jndex));
+				Integer third = dico.getID(data.get(0).get(jndex));
+				index.putIfAbsent(first, new TreeMap<>());
+				TreeMap<Integer, TreeSet<Integer>> objMap = index.get(first);
+				objMap.putIfAbsent(second, new TreeSet<>());
+				objMap.get(second).add(third);
 				nbTriple++;
 			}
 
@@ -106,6 +108,10 @@ public class ThreeURI_Index {
 	
 	public Set<Integer> getKeySet(){
 		return index.keySet();
+	}
+	
+	public int getNbTriple() {
+		return nbTriple;
 	}
 
 	/**
