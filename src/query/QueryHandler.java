@@ -4,6 +4,7 @@ import java.util.TreeSet;
 
 import index.SingleURI_Selectivity;
 import index.ThreeURI_Index;
+import index.ThreeURI_Index.INDEX_TYPE;
 
 /**
  * 
@@ -45,8 +46,14 @@ public class QueryHandler {
 	private TreeSet<Integer> getSingleConditionSolutions(ThreeURI_Index index, Integer[] cond) {
 		TreeSet<Integer> solutions = new TreeSet<>();
 
-		if ((index.get(cond[0]) != null) && index.get(cond[0]).get(cond[1]) != null)
-			solutions.addAll(index.get(cond[0]).get(cond[1]));
+		if(index.type.equals(INDEX_TYPE.POS)) 
+			if ((index.get(cond[0]) != null) && index.get(cond[0]).get(cond[1]) != null) 
+				solutions.addAll(index.get(cond[0]).get(cond[1]));
+			
+		if(index.type.equals(INDEX_TYPE.OPS))
+			if ((index.get(cond[1]) != null) && index.get(cond[1]).get(cond[0]) != null) 
+				solutions.addAll(index.get(cond[1]).get(cond[0]));
+		
 
 		return solutions;
 	}
@@ -93,7 +100,7 @@ public class QueryHandler {
 		else merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
 		
 
-		if (query.conditions.size() > 0) {
+		if (query.conditions.size() > 1) {
 			
 			for (int i = 1; i < query.conditions.size(); i++) {
 				

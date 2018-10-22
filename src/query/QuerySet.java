@@ -83,6 +83,46 @@ public class QuerySet {
 		fw.close();
 	}
 	
+	/**
+	 * Shows the results as integer of each query in the query set
+	 * 
+	 * @param outputPath
+	 *            The folder that contains the file in which you want to write
+	 * 
+	 * @throws IOException
+	 */
+	public void showResultsAsInteger(String outputPath) throws IOException {
+
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger");
+
+		for (Query query : querySet) {
+			fw.write(query.showQuery() + "\n");
+			fw.write(query.showResultAsInteger() + "\n");
+		}
+
+		fw.close();
+	}
+	
+	/**
+	 * Shows the results as URI of each query in the query set
+	 * 
+	 * @param outputPath
+	 *            The folder that contains the file in which you want to write
+	 * 
+	 * @throws IOException
+	 */
+	public void showResultsAsURI(String outputPath) throws IOException {
+
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI");
+
+		for (Query query : querySet) {
+			fw.write(query.showQuery() + "\n");
+			fw.write(query.showResultAsURI() + "\n");
+		}
+
+		fw.close();
+	}
+	
 	public Query get(int index) {
 		return querySet.get(index);
 	}

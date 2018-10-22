@@ -32,7 +32,7 @@ public class ThreeURI_Index {
 		POS, OPS
 	};
 
-	private INDEX_TYPE type;
+	public INDEX_TYPE type;
 
 	/**
 	 * Creates an empty index and initializes the data you need
@@ -68,8 +68,8 @@ public class ThreeURI_Index {
 		case POS:
 			for (int jndex = 0; jndex < data.get(0).size(); jndex++) {
 				Integer first = dico.getID(data.get(1).get(jndex));
-				Integer second = dico.getID(data.get(0).get(jndex));
-				Integer third = dico.getID(data.get(2).get(jndex));
+				Integer second = dico.getID(data.get(2).get(jndex));
+				Integer third = dico.getID(data.get(0).get(jndex));
 				index.putIfAbsent(first, new TreeMap<>());
 				TreeMap<Integer, TreeSet<Integer>> objMap = index.get(first);
 				objMap.putIfAbsent(second, new TreeSet<>());

@@ -97,9 +97,13 @@ public class Requester {
 		dictionary = new Dictionary(fullData);		
 		initIndexes();
 		initQuerySet();	
+	
+		for(int index = 0 ; index < querySet.getSize() ; index++) 
+			queryHandler.getSolutions(querySet.get(index));
 		
-		for(int index = 0 ; index < querySet.getSize() ; index++) queryHandler.getSolutions(querySet.get(index));
-		
+		querySet.showResultsAsURI(outputPath);
+			
+
 	}
 
 	public void initQuerySet() throws FileNotFoundException {
@@ -117,6 +121,7 @@ public class Requester {
 
 		POS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.POS);
 		POS.IndexBuilder();
+		POS.showIndex(outputPath);
 
 		o_frequency = new SingleURI_Selectivity(OPS);
 		o_frequency.ComputeSelectivity(numberOfTriples);

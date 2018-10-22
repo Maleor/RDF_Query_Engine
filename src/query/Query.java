@@ -87,5 +87,33 @@ public class Query {
 		toShow.append("}\n");
 		return toShow.toString();
 	}
+	
+	public String showResultAsInteger() {
+
+		StringBuilder toShow = new StringBuilder();
+
+		toShow.append("Results :\n");
+
+		for (Integer i : answer) 
+			toShow.append("-- " + i + "\n");
+		
+		toShow.append("\n\n --------------------------------------- \n\n");
+		
+		return toShow.toString();
+	}
+	
+	public String showResultAsURI() {
+
+		StringBuilder toShow = new StringBuilder();
+
+		toShow.append("Results :\n");
+
+		for (Integer i : answer) 
+			toShow.append("-- " + dico.getURI(i) + "\n");
+		
+		toShow.append("\n\n --------------------------------------- \n\n");
+		
+		return toShow.toString();
+	}
 
 }
