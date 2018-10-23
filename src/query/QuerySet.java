@@ -114,7 +114,8 @@ public class QuerySet {
 	public void showResultsAsURI(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI");
-
+		
+		
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showResultAsURI() + "\n");

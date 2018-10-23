@@ -50,6 +50,11 @@ public class Requester {
 	public QuerySet querySet;
 	
 	public QueryHandler queryHandler;
+	
+	public boolean verbose;
+	public boolean export_results;
+	public boolean export_stats;
+	public boolean workload_time;
 
 	///////////////////
 	/** CONSTRUCTOR **/
@@ -62,6 +67,10 @@ public class Requester {
 		dataFile = args[1];
 		queryFile = args[0];
 		outputPath = args[2];
+		verbose = args[3].equals("1") ? true : false; 
+		export_results = args[4].equals("1") ? true : false;
+		export_stats = args[5].equals("1") ? true : false;
+		workload_time = args[6].equals("1") ? true : false;
 	}
 
 	/**
