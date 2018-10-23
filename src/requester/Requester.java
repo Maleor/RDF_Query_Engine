@@ -105,11 +105,17 @@ public class Requester {
 		initData();
 		dictionary = new Dictionary(fullData);		
 		initIndexes();
+		
+		Instant t1 = Instant.now();
 		initQuerySet();	
 	
+		
+		
+		
 		for(int index = 0 ; index < querySet.getSize() ; index++) 
 			queryHandler.getSolutions(querySet.get(index));
 		
+		System.out.println(Duration.between(t1 , Instant.now()).toMillis());
 		querySet.showResultsAsURI(outputPath);
 			
 
@@ -134,6 +140,7 @@ public class Requester {
 
 		o_frequency = new SingleURI_Selectivity(OPS);
 		o_frequency.ComputeSelectivity(numberOfTriples);
+		o_frequency.Show_URI_Selectivity("o", outputPath);
 
 		p_frequency = new SingleURI_Selectivity(POS);
 		p_frequency.ComputeSelectivity(numberOfTriples);

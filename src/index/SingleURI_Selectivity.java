@@ -41,7 +41,14 @@ public class SingleURI_Selectivity {
 	 * @return The frequency of the given URI
 	 */
 	private Double computeFrequency(int key, int numberOfTriples) {
-		return ((double) data.get(key).keySet().size() / (double) numberOfTriples);
+		
+		Set<Integer> values = data.get(key).keySet();
+		int stack = 0;
+		
+		for(Integer i : values)
+			stack += data.get(key).get(i).size();
+				
+		return ((double) stack / (double) numberOfTriples);
 	}
 
 	//////////////////////
