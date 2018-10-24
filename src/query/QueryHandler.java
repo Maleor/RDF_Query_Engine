@@ -94,12 +94,10 @@ public class QueryHandler {
 		
 		if(cond1_frequency==0.0 || cond2_frequency==0.0) 
 			return;
-		
-		
+				
 		if(cond1_frequency < cond2_frequency) merged = getSingleConditionSolutions(POS, query.conditions.get(0));
 		else merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
 		
-
 		if (query.conditions.size() > 1) {
 			
 			for (int i = 1; i < query.conditions.size(); i++) {
@@ -115,7 +113,7 @@ public class QueryHandler {
 				if(cond1_frequency < cond2_frequency) toMerge = getSingleConditionSolutions(POS, query.conditions.get(i));
 				else toMerge = getSingleConditionSolutions(OPS, query.conditions.get(i));
 				
-				mergeSolutions(toMerge, merged);
+				merged = mergeSolutions(toMerge, merged);
 			}
 		}
 		query.answer.addAll(merged);

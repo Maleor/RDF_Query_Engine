@@ -103,29 +103,36 @@ public class Requester {
 	public void run() throws IOException{
 
 		initData();
-		dictionary = new Dictionary(fullData);		
-		initIndexes();
-		
 		Instant t1 = Instant.now();
+		dictionary = new Dictionary(fullData);	
+		dictionary.showDico(outputPath);
+		if(verbose) System.out.println("Initialization of the dictionary ---> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		
+		t1 = Instant.now();
+		initIndexes();
+		if(verbose) System.out.println("Initialization of the indexes ------> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		
+		t1 = Instant.now();
 		initQuerySet();	
-	
+		if(verbose) System.out.println("Initialization of the query set ----> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
 		
 		
-		
+		t1 = Instant.now();
 		for(int index = 0 ; index < querySet.getSize() ; index++) 
-			queryHandler.getSolutions(querySet.get(index));
+			queryHandler.getSolutions(querySet.get(index));	
+		if(verbose) System.out.println("Time to find solutions -------------> " + Duration.between(t1 , Instant.now()).toMillis() + " ms");
 		
-		System.out.println(Duration.between(t1 , Instant.now()).toMillis());
 		querySet.showResultsAsURI(outputPath);
 			
 
 	}
 
 	public void initQuerySet() throws FileNotFoundException {
+	
 		
 		querySet = new QuerySet(dictionary);
 		querySet.ParseQueryFile(queryFile);
-		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
+		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);	
 	}
 	
 	public void initIndexes() throws IOException {

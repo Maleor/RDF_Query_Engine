@@ -18,7 +18,7 @@ import dictionary.Dictionary;
 public class QuerySet {
 
 	public ArrayList<Query> querySet;
-	
+
 	private Dictionary dico;
 
 	///////////////////
@@ -43,25 +43,33 @@ public class QuerySet {
 	 */
 	public void ParseQueryFile(String file) throws FileNotFoundException {
 
-		@SuppressWarnings("resource")
-		Scanner scanner = new Scanner(new File(file));
+		File files = new File(file);
 
-		StringBuilder stringB = new StringBuilder();
+		File[] fi = files.listFiles();
+		
+		Scanner scanner;
+		
+		for (File f : fi) {
 
-		while (scanner.hasNextLine()) {
+			scanner = new Scanner(new File(f.getPath()));
 
-			String line = scanner.nextLine();
+			StringBuilder stringB = new StringBuilder();
 
-			if ((line.contains("select"))
-					|| (line.contains("SELECT"))) /* if a line starts with 'select' then we create a new query */
-				stringB = new StringBuilder();
+			while (scanner.hasNextLine()) {
 
-			stringB.append(line);
+				String line = scanner.nextLine();
 
-			if (line.contains("}")) {
-				querySet.add(new Query(stringB, dico));
+				if ((line.contains("select"))
+						|| (line.contains("SELECT"))) /* if a line starts with 'select' then we create a new query */
+					stringB = new StringBuilder();
+
+				stringB.append(line);
+
+				if (line.contains("}")) {
+					querySet.add(new Query(stringB, dico));
+				}
+
 			}
-
 		}
 	}
 
@@ -82,7 +90,7 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	/**
 	 * Shows the results as integer of each query in the query set
 	 * 
@@ -102,7 +110,7 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	/**
 	 * Shows the results as URI of each query in the query set
 	 * 
@@ -114,8 +122,7 @@ public class QuerySet {
 	public void showResultsAsURI(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI");
-		
-		
+
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showResultAsURI() + "\n");
@@ -123,11 +130,11 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	public Query get(int index) {
 		return querySet.get(index);
 	}
-	
+
 	public int getSize() {
 		return querySet.size();
 	}
