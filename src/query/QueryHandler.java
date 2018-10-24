@@ -1,5 +1,8 @@
 package query;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.HashSet;
 import java.util.TreeSet;
 
 import index.SingleURI_Selectivity;
@@ -43,17 +46,16 @@ public class QueryHandler {
 	 * 
 	 * @return The solution set
 	 */
-	private TreeSet<Integer> getSingleConditionSolutions(ThreeURI_Index index, Integer[] cond) {
-		TreeSet<Integer> solutions = new TreeSet<>();
+	private HashSet<Integer> getSingleConditionSolutions(ThreeURI_Index index, Integer[] cond) {
+		HashSet<Integer> solutions = new HashSet<>();
 
-		if(index.type.equals(INDEX_TYPE.POS)) 
-			if ((index.get(cond[0]) != null) && index.get(cond[0]).get(cond[1]) != null) 
+		if (index.type.equals(INDEX_TYPE.POS))
+			if ((index.get(cond[0]) != null) && index.get(cond[0]).get(cond[1]) != null)
 				solutions.addAll(index.get(cond[0]).get(cond[1]));
-			
-		if(index.type.equals(INDEX_TYPE.OPS))
-			if ((index.get(cond[1]) != null) && index.get(cond[1]).get(cond[0]) != null) 
+
+		if (index.type.equals(INDEX_TYPE.OPS))
+			if ((index.get(cond[1]) != null) && index.get(cond[1]).get(cond[0]) != null)
 				solutions.addAll(index.get(cond[1]).get(cond[0]));
-		
 
 		return solutions;
 	}
@@ -70,8 +72,8 @@ public class QueryHandler {
 	 * 
 	 * @return the set of common solutions
 	 */
-	private TreeSet<Integer> mergeSolutions(TreeSet<Integer> toPutIn, TreeSet<Integer> toGetMerged) {
-		TreeSet<Integer> merged = new TreeSet<>();
+	private HashSet<Integer> mergeSolutions(HashSet<Integer> toPutIn, HashSet<Integer> toGetMerged) {
+		HashSet<Integer> merged = new HashSet<>();
 
 		for (Integer i : toPutIn)
 			if (toGetMerged.contains(i))
@@ -86,34 +88,39 @@ public class QueryHandler {
 
 	public void getSolutions(Query query) {
 
-		TreeSet<Integer> merged = new TreeSet<>();
-		TreeSet<Integer> toMerge = new TreeSet<>();
-		
+		HashSet<Integer> merged = new HashSet<>();
+		HashSet<Integer> toMerge = new HashSet<>();
+
 		Double cond1_frequency = p_frequency.get(query.conditions.get(0)[0]);
 		Double cond2_frequency = o_frequency.get(query.conditions.get(0)[1]);
-		
-		if(cond1_frequency==0.0 || cond2_frequency==0.0) 
+
+		if (cond1_frequency == 0.0 || cond2_frequency == 0.0)
 			return;
-				
-		if(cond1_frequency < cond2_frequency) merged = getSingleConditionSolutions(POS, query.conditions.get(0));
-		else merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
-		
+
+		if (cond1_frequency < cond2_frequency)
+			merged = getSingleConditionSolutions(POS, query.conditions.get(0));
+		else
+			merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
+
 		if (query.conditions.size() > 1) {
-			
+
 			for (int i = 1; i < query.conditions.size(); i++) {
-				
+
 				cond1_frequency = p_frequency.get(query.conditions.get(i)[0]);
 				cond2_frequency = o_frequency.get(query.conditions.get(i)[1]);
-				
-				if(cond1_frequency==0.0 || cond2_frequency==0.0) {
-					merged = new TreeSet<>();
+
+				if (cond1_frequency == 0.0 || cond2_frequency == 0.0) {
+					merged = new HashSet<>();
 					break;
 				}
 
-				if(cond1_frequency < cond2_frequency) toMerge = getSingleConditionSolutions(POS, query.conditions.get(i));
-				else toMerge = getSingleConditionSolutions(OPS, query.conditions.get(i));
-				
+				if (cond1_frequency < cond2_frequency)
+					toMerge = getSingleConditionSolutions(POS, query.conditions.get(i));
+				else
+					toMerge = getSingleConditionSolutions(OPS, query.conditions.get(i));
+
 				merged = mergeSolutions(toMerge, merged);
+
 			}
 		}
 		query.answer.addAll(merged);

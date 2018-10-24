@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.TreeMap;
 
 /**
@@ -22,14 +23,14 @@ public class Dictionary {
 	/** CONSTRUCTOR **/
 	///////////////////
 
-	public Dictionary(ArrayList<String> toMap) {
+	public Dictionary(HashSet<String> toMap) {
 
 		URI_to_ID = new TreeMap<>();
 		ID_to_URI = new HashMap<>();
 
-		for (String string : toMap)
+		for (String string : toMap) 
 			URI_to_ID.put(string, 0);
-
+		
 		int index = 0;
 		for (String string : URI_to_ID.keySet()) {
 			URI_to_ID.put(string, index);

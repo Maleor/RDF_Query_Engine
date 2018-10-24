@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.management.Query;
 
@@ -31,7 +32,7 @@ public class Requester {
 	public Dictionary dictionary;
 
 	public ArrayList<ArrayList<String>> tripleData;
-	public ArrayList<String> fullData;
+	public HashSet<String> fullData;
 
 	public String dataFile;
 	public String queryFile;
@@ -63,7 +64,7 @@ public class Requester {
 	public Requester(String[] args) {
 		parser = new RDFRawParser();
 		tripleData = new ArrayList<>();
-		fullData = new ArrayList<>();
+		fullData = new HashSet<>();
 		dataFile = args[1];
 		queryFile = args[0];
 		outputPath = args[2];
@@ -101,9 +102,14 @@ public class Requester {
 	 * 
 	 */
 	public void run() throws IOException{
-
-		initData();
+		
+		Instant t2 = Instant.now();
+		
 		Instant t1 = Instant.now();
+		initData();
+		if(verbose) System.out.println("Initialization of the data ---------> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		
+		t1 = Instant.now();
 		dictionary = new Dictionary(fullData);	
 		dictionary.showDico(outputPath);
 		if(verbose) System.out.println("Initialization of the dictionary ---> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
@@ -115,16 +121,15 @@ public class Requester {
 		t1 = Instant.now();
 		initQuerySet();	
 		if(verbose) System.out.println("Initialization of the query set ----> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
-		
-		
+				
 		t1 = Instant.now();
 		for(int index = 0 ; index < querySet.getSize() ; index++) 
 			queryHandler.getSolutions(querySet.get(index));	
 		if(verbose) System.out.println("Time to find solutions -------------> " + Duration.between(t1 , Instant.now()).toMillis() + " ms");
 		
+		if(verbose) System.out.println("Total execution time ---------------> " + Duration.between(t2, Instant.now()).toMillis() + " ms");
+		
 		querySet.showResultsAsURI(outputPath);
-			
-
 	}
 
 	public void initQuerySet() throws FileNotFoundException {
