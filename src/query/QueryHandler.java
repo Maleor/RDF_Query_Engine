@@ -1,7 +1,9 @@
 package query;
 
+import java.awt.List;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.TreeSet;
 
@@ -72,8 +74,10 @@ public class QueryHandler {
 	 * 
 	 * @return the set of common solutions
 	 */
+	@Deprecated
 	private HashSet<Integer> mergeSolutions(HashSet<Integer> toPutIn, HashSet<Integer> toGetMerged) {
 		HashSet<Integer> merged = new HashSet<>();
+		ArrayList<Integer> test = new ArrayList<>();
 
 		for (Integer i : toPutIn)
 			if (toGetMerged.contains(i))
@@ -119,7 +123,10 @@ public class QueryHandler {
 				else
 					toMerge = getSingleConditionSolutions(OPS, query.conditions.get(i));
 
-				merged = mergeSolutions(toMerge, merged);
+				merged.retainAll(toMerge);
+
+				if (merged.isEmpty())
+					break;
 
 			}
 		}

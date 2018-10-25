@@ -137,6 +137,10 @@ public class Requester {
 		
 		querySet = new QuerySet(dictionary);
 		querySet.ParseQueryFile(queryFile);
+		
+		for(int index = 0 ; index < querySet.getSize() ; index++) 
+			querySet.get(index).orderConditions(POS, numberOfTriples);
+		
 		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);	
 	}
 	

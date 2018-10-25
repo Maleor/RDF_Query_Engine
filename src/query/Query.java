@@ -61,12 +61,53 @@ public class Query {
 		}
 	}
 
-	
-
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
 
+	/**
+	 * Sorts the conditions so that the couple P O of the first condition has the
+	 * lowest frequency in the data and the last condition contains the couple P O
+	 * with the highest frequency
+	 * 
+	 * @param POS
+	 *            The index that contains the data
+	 * 
+	 * @param nbT
+	 *            The number of triples
+	 */
+	public void orderConditions(ThreeURI_Index POS, int nbT) {
+
+		ArrayList<Integer[]> sortedCdt = new ArrayList<>();
+
+		int rankToRemove = 0;
+
+		for (int jndex = 0; jndex < conditions.size(); jndex++) {
+			Double minFre = 100000.0;
+
+			for (int kndex = 0; kndex < conditions.size(); kndex++) {
+				
+				if (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1]) != null) {
+					
+					double toCompare = (double) (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1])).size()
+							/ (double) nbT;
+					
+					if (toCompare < minFre) {
+						
+						minFre = toCompare;
+
+						rankToRemove = kndex;
+					}
+				}
+			}
+
+			sortedCdt.add(conditions.get(rankToRemove));
+			conditions.remove(conditions.get(rankToRemove));
+		}
+
+		conditions = sortedCdt;
+
+	}
 
 	/**
 	 * Transforms the condition collection of the query into a full SPARQL query
@@ -87,32 +128,32 @@ public class Query {
 		toShow.append("}\n");
 		return toShow.toString();
 	}
-	
+
 	public String showResultAsInteger() {
 
 		StringBuilder toShow = new StringBuilder();
 
 		toShow.append("Results :\n");
 
-		for (Integer i : answer) 
+		for (Integer i : answer)
 			toShow.append("-- " + i + "\n");
-		
+
 		toShow.append("\n\n --------------------------------------- \n\n");
-		
+
 		return toShow.toString();
 	}
-	
+
 	public String showResultAsURI() {
 
 		StringBuilder toShow = new StringBuilder();
 
 		toShow.append("Results :\n");
 
-		for (Integer i : answer) 
+		for (Integer i : answer)
 			toShow.append("-- " + dico.getURI(i) + "\n");
-		
+
 		toShow.append("\n\n --------------------------------------- \n\n");
-		
+
 		return toShow.toString();
 	}
 
