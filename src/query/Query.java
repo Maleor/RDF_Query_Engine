@@ -1,12 +1,9 @@
 package query;
 
 import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.concurrent.locks.Condition;
 
 import dictionary.Dictionary;
-import index.*;
+import index.ThreeURI_Index;
 
 /**
  * 

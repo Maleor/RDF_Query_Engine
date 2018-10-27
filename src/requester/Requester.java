@@ -1,17 +1,11 @@
 package requester;
 
-import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import javax.management.Query;
 
 import dataParser.RDFRawParser;
 import dictionary.Dictionary;

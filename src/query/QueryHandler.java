@@ -1,11 +1,6 @@
 package query;
 
-import java.awt.List;
-import java.time.Duration;
-import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 import index.SingleURI_Selectivity;
 import index.ThreeURI_Index;
@@ -40,11 +35,9 @@ public class QueryHandler {
 	/**
 	 * Looks for the triples that respect a single P O condition
 	 * 
-	 * @param index
-	 *            The index that contains the data
+	 * @param index The index that contains the data
 	 * 
-	 * @param cond
-	 *            The condition to respect
+	 * @param cond  The condition to respect
 	 * 
 	 * @return The solution set
 	 */
@@ -62,34 +55,15 @@ public class QueryHandler {
 		return solutions;
 	}
 
-	/**
-	 * Merges 2 sets of solutions
-	 * 
-	 * @param toPutIn
-	 *            The new set of solutions you want to put in your previous merged
-	 *            set
-	 * 
-	 * @param toGetMerged
-	 *            The previous merged set of solutions
-	 * 
-	 * @return the set of common solutions
-	 */
-	@Deprecated
-	private HashSet<Integer> mergeSolutions(HashSet<Integer> toPutIn, HashSet<Integer> toGetMerged) {
-		HashSet<Integer> merged = new HashSet<>();
-		ArrayList<Integer> test = new ArrayList<>();
-
-		for (Integer i : toPutIn)
-			if (toGetMerged.contains(i))
-				merged.add(i);
-
-		return merged;
-	}
-
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
 
+	/**
+	 * Finds all the solutions of a specific query using its conditions
+	 * 
+	 * @param query The query you want to evaluate
+	 */
 	public void getSolutions(Query query) {
 
 		HashSet<Integer> merged = new HashSet<>();
