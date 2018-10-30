@@ -1,5 +1,7 @@
 package query;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.HashSet;
 
 import index.SingleURI_Selectivity;
@@ -68,7 +70,7 @@ public class QueryHandler {
 
 		HashSet<Integer> merged = new HashSet<>();
 		HashSet<Integer> toMerge = new HashSet<>();
-
+		
 		Double cond1_frequency = p_frequency.get(query.conditions.get(0)[0]);
 		Double cond2_frequency = o_frequency.get(query.conditions.get(0)[1]);
 
@@ -80,7 +82,7 @@ public class QueryHandler {
 		else
 			merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
 
-		if (query.conditions.size() > 1) {
+		if (query.conditions.size() > 1 && !merged.isEmpty()) {
 
 			for (int i = 1; i < query.conditions.size(); i++) {
 

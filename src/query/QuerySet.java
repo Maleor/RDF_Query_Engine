@@ -102,7 +102,8 @@ public class QuerySet {
 	public void showResultsAsInteger(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger");
-
+		
+		
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showResultAsInteger() + "\n");
@@ -126,6 +127,17 @@ public class QuerySet {
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showResultAsURI() + "\n");
+		}
+
+		fw.close();
+	}
+	
+	public void showStats(String outputPath) throws IOException {
+		FileWriter fw = new FileWriter(outputPath + "/stats");
+		
+		for (Query query : querySet) {
+			fw.write(query.showQuery() + "\n");
+			fw.write(query.showQueryStats() + "\n");
 		}
 
 		fw.close();

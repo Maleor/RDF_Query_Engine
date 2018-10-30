@@ -16,6 +16,8 @@ public class Query {
 	public ArrayList<Integer> answer;
 	public ArrayList<Integer[]> conditions;
 	public Dictionary dico;
+	public double estimatedSelectivity;
+	public double evaluationTime;
 
 	///////////////////
 	/** CONSTRUCTOR **/
@@ -97,7 +99,7 @@ public class Query {
 					}
 				}
 			}
-
+			if(jndex == 0) estimatedSelectivity = 1.0 - minFre;
 			sortedCdt.add(conditions.get(rankToRemove));
 			conditions.remove(conditions.get(rankToRemove));
 		}
@@ -151,6 +153,19 @@ public class Query {
 
 		toShow.append("\n\n --------------------------------------- \n\n");
 
+		return toShow.toString();
+	}
+	
+	public String showQueryStats() {
+		StringBuilder toShow = new StringBuilder();
+
+		toShow.append("Evaluation time : ");
+		toShow.append(evaluationTime + " ms\n");
+		toShow.append("Estimated selectivity : ");
+		toShow.append(estimatedSelectivity + "\n");
+		
+		toShow.append("\n\n --------------------------------------- \n\n");
+		
 		return toShow.toString();
 	}
 

@@ -1,6 +1,7 @@
 package requester;
 
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
@@ -43,9 +44,9 @@ public class Requester {
 	public SingleURI_Selectivity p_frequency;
 
 	public QuerySet querySet;
-	
+
 	public QueryHandler queryHandler;
-	
+
 	public boolean verbose;
 	public boolean export_results;
 	public boolean export_stats;
@@ -62,7 +63,7 @@ public class Requester {
 		dataFile = args[1];
 		queryFile = args[0];
 		outputPath = args[2];
-		verbose = args[3].equals("1") ? true : false; 
+		verbose = args[3].equals("1") ? true : false;
 		export_results = args[4].equals("1") ? true : false;
 		export_stats = args[5].equals("1") ? true : false;
 		workload_time = args[6].equals("1") ? true : false;
@@ -92,52 +93,112 @@ public class Requester {
 	/**
 	 * Initializes and executes the evaluation of the queries
 	 * 
-	 * @throws IOException 
+	 * @throws IOException
 	 * 
 	 */
-	public void run() throws IOException{
-		
+	public void run() throws IOException {
+
+		Instant t3;
 		Instant t2 = Instant.now();
-		
 		Instant t1 = Instant.now();
+		Instant t1fin;
+		
+		@SuppressWarnings("resource")
+		FileWriter fw = new FileWriter(outputPath + "/executionStats.csv");
+
+		/***** Init data *****/
+
+		if (verbose)
+			System.out.print("Initialization of the data ---------> ");
 		initData();
-		if(verbose) System.out.println("Initialization of the data ---------> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
-		
-		t1 = Instant.now();
-		dictionary = new Dictionary(fullData);	
-		dictionary.showDico(outputPath);
-		if(verbose) System.out.println("Initialization of the dictionary ---> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
-		
-		t1 = Instant.now();
-		initIndexes();
-		if(verbose) System.out.println("Initialization of the indexes ------> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
-		
-		t1 = Instant.now();
-		initQuerySet();	
-		if(verbose) System.out.println("Initialization of the query set ----> " + Duration.between(t1, Instant.now()).toMillis() + " ms");
+		t1fin = Instant.now();
 				
+		if (verbose)
+			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
+		
+		fw.write("Initialization of the data ---------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
+		/***** Init dico *****/
+
 		t1 = Instant.now();
-		for(int index = 0 ; index < querySet.getSize() ; index++) 
-			queryHandler.getSolutions(querySet.get(index));	
-		if(verbose) System.out.println("Time to find solutions -------------> " + Duration.between(t1 , Instant.now()).toMillis() + " ms");
+		if (verbose)
+			System.out.print("Initialization of the dictionary ---> ");
+		dictionary = new Dictionary(fullData);
+		t1fin = Instant.now();
+		if (verbose)
+			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
 		
-		if(verbose) System.out.println("Total execution time ---------------> " + Duration.between(t2, Instant.now()).toMillis() + " ms");
+		fw.write("Initialization of the dictionary ---> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
+		/***** Init indexes *****/
+
+		t1 = Instant.now();
+		if (verbose)
+			System.out.print("Initialization of the indexes ------> ");
+		initIndexes();
+		t1fin = Instant.now();
+		if (verbose)
+			System.out.println(Duration.between(t1,t1fin = Instant.now()).toMillis() + " ms");
 		
-		querySet.showResultsAsURI(outputPath);
+		fw.write("Initialization of the indexes ------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
+		/***** Init query set *****/
+
+		t1 = Instant.now();
+		if (verbose)
+			System.out.print("Initialization of the query set ----> ");
+		initQuerySet();
+		t1fin = Instant.now();
+		if (verbose)
+			System.out.println(Duration.between(t1, Instant.now()).toMillis() + " ms");
+		
+		fw.write("Initialization of the query set ----> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
+		/***** Evalution of the queries *****/
+
+		t1 = Instant.now();
+		if (verbose)
+			System.out.print("\nEvaluation of the queries ----------> ");
+
+		for (int index = 0; index < querySet.getSize(); index++) {
+			t3 = Instant.now();
+			queryHandler.getSolutions(querySet.get(index));
+			querySet.get(index).evaluationTime = Duration.between(t3, Instant.now()).toNanos();
+		}
+		t1fin = Instant.now();
+		
+		if (verbose)
+			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
+		
+		fw.write("Total execution time ---------------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
+		if (verbose)
+			System.out.println("\nTotal execution time ---------------> "
+					+ Duration.between(t2, Instant.now()).toMillis() + " ms");
+
+		
+		fw.close();
+		
+		/***** Exports *****/
+
+		if (export_results)
+			querySet.showResultsAsURI(outputPath);
+
+		if (export_stats)
+			querySet.showStats(outputPath);
 	}
 
 	public void initQuerySet() throws FileNotFoundException {
-	
-		
+
 		querySet = new QuerySet(dictionary);
 		querySet.ParseQueryFile(queryFile);
-		
-		for(int index = 0 ; index < querySet.getSize() ; index++) 
+
+		for (int index = 0; index < querySet.getSize(); index++)
 			querySet.get(index).orderConditions(POS, numberOfTriples);
-		
-		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);	
+
+		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
 	}
-	
+
 	public void initIndexes() throws IOException {
 
 		OPS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.OPS);

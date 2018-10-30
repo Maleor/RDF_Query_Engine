@@ -52,9 +52,15 @@ public class Runner {
 			return;
 		}
 
+		System.out.println("#################################");
+		System.out.println("####### PROGRAM EXECUTION #######");
+		System.out.println("##################################\n");
 		
 		Requester requester = new Requester(args);
 		requester.run();
 
+		System.out.println("\n##################################");
+		System.out.println("####### END OF THE PROGRAM #######");
+		System.out.println("##################################");
 	}
 }
