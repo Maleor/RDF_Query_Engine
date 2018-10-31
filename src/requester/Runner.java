@@ -54,7 +54,7 @@ public class Runner {
 
 		System.out.println("#################################");
 		System.out.println("####### PROGRAM EXECUTION #######");
-		System.out.println("##################################\n");
+		System.out.println("#################################\n");
 		
 		Requester requester = new Requester(args);
 		requester.run();

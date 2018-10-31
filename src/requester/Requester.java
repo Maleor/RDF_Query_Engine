@@ -86,6 +86,59 @@ public class Requester {
 				fullData.add(string); /* creates a list that contains all the URI */
 	}
 
+	/**
+	 * Initializes the set of query, first it parses the files, then it sorts the
+	 * conditions and finally builds a query handler.
+	 * 
+	 * @throws FileNotFoundException
+	 */
+	private void initQuerySet() throws FileNotFoundException {
+
+		querySet = new QuerySet(dictionary);
+		querySet.ParseQueryFile(queryFile);
+
+		for (int index = 0; index < querySet.getSize(); index++)
+			querySet.get(index).orderConditions(POS, numberOfTriples);
+
+		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
+	}
+
+	/**
+	 * Initializes all the indexes
+	 * 
+	 * @throws IOException
+	 */
+	private void initIndexes() throws IOException {
+
+		OPS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.OPS);
+		OPS.IndexBuilder();
+
+		POS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.POS);
+		POS.IndexBuilder();
+
+		o_frequency = new SingleURI_Selectivity(OPS);
+		o_frequency.ComputeSelectivity(numberOfTriples);
+
+		p_frequency = new SingleURI_Selectivity(POS);
+		p_frequency.ComputeSelectivity(numberOfTriples);
+	}
+
+	/**
+	 * Exports the results and the stats if it is asked in the arguments
+	 * 
+	 * @throws IOException
+	 */
+	private void export() throws IOException {
+
+		if (export_results) {
+			querySet.showResultsAsURI(outputPath);
+			querySet.showResultsAsInteger(outputPath);
+		}
+
+		if (export_stats)
+			querySet.showStats(outputPath);
+	}
+
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
@@ -98,122 +151,147 @@ public class Requester {
 	 */
 	public void run() throws IOException {
 
-		Instant t3;
-		Instant t2 = Instant.now();
+		double begQuery;
+		double endQuery;
+
+		Instant beginExec = Instant.now();
+		Instant endExec;
 		Instant t1 = Instant.now();
 		Instant t1fin;
-		
-		@SuppressWarnings("resource")
+
 		FileWriter fw = new FileWriter(outputPath + "/executionStats.csv");
 
-		/***** Init data *****/
+		
+		
+		
+		/*************** Init data ***************/
 
+		
+		
+		
 		if (verbose)
 			System.out.print("Initialization of the data ---------> ");
+		
 		initData();
+		
 		t1fin = Instant.now();
-				
+
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
-		
+
 		fw.write("Initialization of the data ---------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		/***** Init dico *****/
+		
+		
+		
+		/*************** Init dico ***************/
 
+		
+		
+		
 		t1 = Instant.now();
+		
 		if (verbose)
 			System.out.print("Initialization of the dictionary ---> ");
+		
 		dictionary = new Dictionary(fullData);
+		
 		t1fin = Instant.now();
+		
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
-		
+
 		fw.write("Initialization of the dictionary ---> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		/***** Init indexes *****/
+		
+		
+		
+		/*************** Init indexes ***************/
 
+		
+		
+		
 		t1 = Instant.now();
+		
 		if (verbose)
 			System.out.print("Initialization of the indexes ------> ");
+		
 		initIndexes();
 		t1fin = Instant.now();
-		if (verbose)
-			System.out.println(Duration.between(t1,t1fin = Instant.now()).toMillis() + " ms");
 		
+		if (verbose)
+			System.out.println(Duration.between(t1, t1fin = Instant.now()).toMillis() + " ms");
+
 		fw.write("Initialization of the indexes ------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		/***** Init query set *****/
+		
+		
+		
+		/*************** Init query set ***************/
 
+		
+		
+		
 		t1 = Instant.now();
+		
 		if (verbose)
 			System.out.print("Initialization of the query set ----> ");
+		
 		initQuerySet();
+		
 		t1fin = Instant.now();
+		
 		if (verbose)
 			System.out.println(Duration.between(t1, Instant.now()).toMillis() + " ms");
-		
+
 		fw.write("Initialization of the query set ----> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		/***** Evalution of the queries *****/
+		
+		
+		
+		/*************** Evaluation of the queries ***************/
 
+		
+		
+		
 		t1 = Instant.now();
+		
 		if (verbose)
 			System.out.print("\nEvaluation of the queries ----------> ");
 
 		for (int index = 0; index < querySet.getSize(); index++) {
-			t3 = Instant.now();
+			begQuery = System.nanoTime();
 			queryHandler.getSolutions(querySet.get(index));
-			querySet.get(index).evaluationTime = Duration.between(t3, Instant.now()).toNanos();
+			endQuery = System.nanoTime();
+			querySet.get(index).evaluationTime = endQuery - begQuery;
 		}
-		t1fin = Instant.now();
 		
+		t1fin = Instant.now();
+
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
+
+		fw.write("Evaluation of the queries ----------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+
 		
-		fw.write("Total execution time ---------------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		
+		
+		
+		endExec = Instant.now();
 
 		if (verbose)
 			System.out.println("\nTotal execution time ---------------> "
-					+ Duration.between(t2, Instant.now()).toMillis() + " ms");
+					+ Duration.between(beginExec, endExec).toMillis() + " ms");
 
-		
+		fw.write("Total execution time ---------------> " + Duration.between(beginExec, endExec).toMillis() + " ms\n");
+
 		fw.close();
+
 		
-		/***** Exports *****/
-
-		if (export_results)
-			querySet.showResultsAsURI(outputPath);
-
-		if (export_stats)
-			querySet.showStats(outputPath);
+		
+		
+		export();
+		
 	}
 
-	public void initQuerySet() throws FileNotFoundException {
-
-		querySet = new QuerySet(dictionary);
-		querySet.ParseQueryFile(queryFile);
-
-		for (int index = 0; index < querySet.getSize(); index++)
-			querySet.get(index).orderConditions(POS, numberOfTriples);
-
-		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
-	}
-
-	public void initIndexes() throws IOException {
-
-		OPS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.OPS);
-		OPS.IndexBuilder();
-		OPS.showIndex(outputPath);
-
-		POS = new ThreeURI_Index(dictionary, tripleData, INDEX_TYPE.POS);
-		POS.IndexBuilder();
-		POS.showIndex(outputPath);
-
-		o_frequency = new SingleURI_Selectivity(OPS);
-		o_frequency.ComputeSelectivity(numberOfTriples);
-		o_frequency.Show_URI_Selectivity("o", outputPath);
-
-		p_frequency = new SingleURI_Selectivity(POS);
-		p_frequency.ComputeSelectivity(numberOfTriples);
-	}
 }

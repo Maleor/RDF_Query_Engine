@@ -18,12 +18,14 @@ public class Query {
 	public Dictionary dico;
 	public double estimatedSelectivity;
 	public double evaluationTime;
+	public int estimatedNumberOfResults;
 
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
 
 	public Query(StringBuilder query, Dictionary dico) {
+		
 		conditions = new ArrayList<Integer[]>();
 		answer = new ArrayList<>();
 		this.dico = dico;
@@ -78,32 +80,45 @@ public class Query {
 	public void orderConditions(ThreeURI_Index POS, int nbT) {
 
 		ArrayList<Integer[]> sortedCdt = new ArrayList<>();
-
+		double toCompare;
 		int rankToRemove = 0;
-
-		for (int jndex = 0; jndex < conditions.size(); jndex++) {
+		
+		int loop = conditions.size();
+		
+		for (int jndex = 0; jndex < loop; jndex++) {		
+			
 			Double minFre = 100000.0;
 
 			for (int kndex = 0; kndex < conditions.size(); kndex++) {
 				
-				if (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1]) != null) {
-					
-					double toCompare = (double) (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1])).size()
-							/ (double) nbT;
-					
-					if (toCompare < minFre) {
-						
-						minFre = toCompare;
-
-						rankToRemove = kndex;
-					}
+				if (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1]) != null) 					
+					toCompare = (double) (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1])).size()
+							/ (double) nbT;											
+				else toCompare = 0;
+				
+				if (toCompare < minFre) {						
+					minFre = toCompare;
+					rankToRemove = kndex;
 				}
-			}
-			if(jndex == 0) estimatedSelectivity = 1.0 - minFre;
-			sortedCdt.add(conditions.get(rankToRemove));
+			}	
+			
+			if(jndex == 0) {
+				if(minFre != 100000) {
+					estimatedSelectivity = 1.0 - minFre;
+					double toto = nbT * minFre;
+					estimatedNumberOfResults = (int) toto;
+				}
+				else {
+					estimatedSelectivity = 1;
+					estimatedNumberOfResults = 0;
+				}
+			}	
+			
+			sortedCdt.add(new Integer[2]);
+			sortedCdt.get(jndex)[0] = conditions.get(rankToRemove)[0];
+			sortedCdt.get(jndex)[1] = conditions.get(rankToRemove)[1];
 			conditions.remove(conditions.get(rankToRemove));
 		}
-
 		conditions = sortedCdt;
 
 	}
@@ -132,7 +147,7 @@ public class Query {
 
 		StringBuilder toShow = new StringBuilder();
 
-		toShow.append("Results :\n");
+		toShow.append("Results (" + answer.size() + ") :\n");
 
 		for (Integer i : answer)
 			toShow.append("-- " + i + "\n");
@@ -146,7 +161,7 @@ public class Query {
 
 		StringBuilder toShow = new StringBuilder();
 
-		toShow.append("Results :\n");
+		toShow.append("Results (" + answer.size() + ") :\n");
 
 		for (Integer i : answer)
 			toShow.append("-- " + dico.getURI(i) + "\n");
@@ -160,10 +175,12 @@ public class Query {
 		StringBuilder toShow = new StringBuilder();
 
 		toShow.append("Evaluation time : ");
-		toShow.append(evaluationTime + " ms\n");
+		toShow.append(evaluationTime + " ns\n");
 		toShow.append("Estimated selectivity : ");
 		toShow.append(estimatedSelectivity + "\n");
-		
+		toShow.append("Estimated number of results : " + estimatedNumberOfResults+"\n");
+		toShow.append("Number of results : " + answer.size()+"\n");
+
 		toShow.append("\n\n --------------------------------------- \n\n");
 		
 		return toShow.toString();

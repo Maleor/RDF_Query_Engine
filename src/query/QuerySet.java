@@ -101,7 +101,7 @@ public class QuerySet {
 	 */
 	public void showResultsAsInteger(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger.csv");
 		
 		
 		for (Query query : querySet) {
@@ -122,7 +122,7 @@ public class QuerySet {
 	 */
 	public void showResultsAsURI(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI.csv");
 
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
@@ -133,7 +133,12 @@ public class QuerySet {
 	}
 	
 	public void showStats(String outputPath) throws IOException {
-		FileWriter fw = new FileWriter(outputPath + "/stats");
+		FileWriter fw = new FileWriter(outputPath + "/queryStats.csv");
+		
+		fw.write("The selectivity is a valu between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
+		fw.write("The selectivity estimation is equal to 1 - (the appearance frequency of the couple P O from the first condition).\n");
+		fw.write("If the estimation is equal to 1, then the set of solution is empty.\n\n");
+		
 		
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");

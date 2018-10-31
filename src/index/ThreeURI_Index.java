@@ -70,9 +70,9 @@ public class ThreeURI_Index {
 				Integer third = dico.getID(data.get(0).get(jndex));
 				
 				index.putIfAbsent(first, new HashMap<>());
-				HashMap<Integer, HashSet<Integer>> objMap = index.get(first);
-				objMap.putIfAbsent(second, new HashSet<>());
-				objMap.get(second).add(third);
+				HashMap<Integer, HashSet<Integer>> interSecond = index.get(first);
+				interSecond.putIfAbsent(second, new HashSet<>());
+				interSecond.get(second).add(third);
 				nbTriple++;
 			}
 			break;
@@ -85,9 +85,9 @@ public class ThreeURI_Index {
 				Integer third = dico.getID(data.get(0).get(jndex));
 				
 				index.putIfAbsent(first, new HashMap<>());
-				HashMap<Integer, HashSet<Integer>> objMap = index.get(first);
-				objMap.putIfAbsent(second, new HashSet<>());
-				objMap.get(second).add(third);
+				HashMap<Integer, HashSet<Integer>> interSecond = index.get(first);
+				interSecond.putIfAbsent(second, new HashSet<>());
+				interSecond.get(second).add(third);
 				nbTriple++;
 			}
 
