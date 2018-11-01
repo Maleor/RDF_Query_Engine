@@ -1,6 +1,7 @@
 package query;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import dictionary.Dictionary;
 import index.ThreeURI_Index;
@@ -19,13 +20,15 @@ public class Query {
 	public double estimatedSelectivity;
 	public double evaluationTime;
 	public int estimatedNumberOfResults;
+	
+	public HashMap<Integer[], Integer> order;
 
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
 
 	public Query(StringBuilder query, Dictionary dico) {
-		
+		order = new HashMap<>();
 		conditions = new ArrayList<Integer[]>();
 		answer = new ArrayList<>();
 		this.dico = dico;
@@ -60,6 +63,12 @@ public class Query {
 				conditions.get(conditions.size() - 1)[1] = dico.getID(cnd2);
 			}
 		}
+		
+		for(int kndex = 0; kndex < conditions.size() ; kndex++) {
+			Integer[] couple = { conditions.get(kndex)[0] , conditions.get(kndex)[1]};
+			order.put(couple, kndex);
+		}
+		
 	}
 
 	//////////////////////
@@ -180,6 +189,12 @@ public class Query {
 		toShow.append(estimatedSelectivity + "\n");
 		toShow.append("Estimated number of results : " + estimatedNumberOfResults+"\n");
 		toShow.append("Number of results : " + answer.size()+"\n");
+		
+		toShow.append("Conditions order : ");
+		for(int index = 0 ; index < conditions.size() ; index++) {
+			Integer[] couple = { conditions.get(index)[0] , conditions.get(index)[1]};
+			toShow.append("-->" + order.get(couple));
+		}
 
 		toShow.append("\n\n --------------------------------------- \n\n");
 		

@@ -167,8 +167,7 @@ public class Requester {
 		/*************** Init data ***************/
 
 		
-		
-		
+				
 		if (verbose)
 			System.out.print("Initialization of the data ---------> ");
 		
