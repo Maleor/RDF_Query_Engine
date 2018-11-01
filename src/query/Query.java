@@ -21,14 +21,11 @@ public class Query {
 	public double evaluationTime;
 	public int estimatedNumberOfResults;
 	
-	public HashMap<Integer[], Integer> order;
-
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
 
 	public Query(StringBuilder query, Dictionary dico) {
-		order = new HashMap<>();
 		conditions = new ArrayList<Integer[]>();
 		answer = new ArrayList<>();
 		this.dico = dico;
@@ -50,24 +47,26 @@ public class Query {
 		String[] tmpWords = query.split(" |\t");
 
 		boolean accolade = false;
-
+		int nbConditions = 0;
 		for (int index = 0; index < tmpWords.length; index++) {
 			if (tmpWords[index].equals("{"))
 				accolade = true;
 
 			if ((tmpWords[index].contains("?")) && (accolade)) {
-				conditions.add(new Integer[2]);
+				nbConditions++;
+				conditions.add(new Integer[3]);
 				String cnd1 = tmpWords[index + 1].substring(1, tmpWords[index + 1].length() - 1);
 				String cnd2 = tmpWords[index + 2].substring(1, tmpWords[index + 2].length() - 1);
 				conditions.get(conditions.size() - 1)[0] = dico.getID(cnd1);
 				conditions.get(conditions.size() - 1)[1] = dico.getID(cnd2);
+				conditions.get(conditions.size() - 1)[2] = nbConditions;
 			}
 		}
 		
-		for(int kndex = 0; kndex < conditions.size() ; kndex++) {
+		/*for(int kndex = 0; kndex < conditions.size() ; kndex++) {
 			Integer[] couple = { conditions.get(kndex)[0] , conditions.get(kndex)[1]};
 			order.put(couple, kndex);
-		}
+		}*/
 		
 	}
 
@@ -123,9 +122,10 @@ public class Query {
 				}
 			}	
 			
-			sortedCdt.add(new Integer[2]);
+			sortedCdt.add(new Integer[3]);
 			sortedCdt.get(jndex)[0] = conditions.get(rankToRemove)[0];
 			sortedCdt.get(jndex)[1] = conditions.get(rankToRemove)[1];
+			sortedCdt.get(jndex)[2] = conditions.get(rankToRemove)[2];
 			conditions.remove(conditions.get(rankToRemove));
 		}
 		conditions = sortedCdt;
@@ -191,11 +191,12 @@ public class Query {
 		toShow.append("Number of results : " + answer.size()+"\n");
 		
 		toShow.append("Conditions order : ");
-		for(int index = 0 ; index < conditions.size() ; index++) {
-			Integer[] couple = { conditions.get(index)[0] , conditions.get(index)[1]};
-			toShow.append("-->" + order.get(couple));
+		toShow.append(conditions.get(0)[2]);
+		if(conditions.size()>1){
+			for(int index = 1 ; index < conditions.size() ; index++) {
+				toShow.append("-->" + conditions.get(index)[2]);
+			}
 		}
-
 		toShow.append("\n\n --------------------------------------- \n\n");
 		
 		return toShow.toString();
