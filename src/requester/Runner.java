@@ -48,7 +48,7 @@ public class Runner {
 		}
 		if ((!args[6].equals("0")) && (!args[6].equals("1"))) {
 			System.err.println("Usage of Workload_time : 1 to visualize the duration that "
-					+ "has been necessery to evaluate each query, 0 otherwise");
+					+ "has been necessery to evaluate the queries, 0 otherwise");
 			return;
 		}
 

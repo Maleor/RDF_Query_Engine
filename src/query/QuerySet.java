@@ -135,7 +135,7 @@ public class QuerySet {
 	public void showStats(String outputPath) throws IOException {
 		FileWriter fw = new FileWriter(outputPath + "/queryStats.csv");
 		
-		fw.write("The selectivity is a valu between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
+		fw.write("The selectivity is a value between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
 		fw.write("The selectivity estimation is equal to 1 - (the appearance frequency of the couple P O from the first condition).\n");
 		fw.write("If the estimation is equal to 1, then the set of solution is empty.\n\n");
 		

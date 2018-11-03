@@ -16,16 +16,24 @@ public class Query {
 
 	public ArrayList<Integer> answer;
 	public ArrayList<Integer[]> conditions;
-	public Dictionary dico;
-	public double estimatedSelectivity;
+
 	public double evaluationTime;
-	public int estimatedNumberOfResults;
-	
+
+	public boolean toBeEvaluated;
+
+	private Dictionary dico;
+
+	private double estimatedSelectivity;
+	private double parsingTime;
+
+	private int estimatedNumberOfResults;
+
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
 
 	public Query(StringBuilder query, Dictionary dico) {
+		toBeEvaluated = true;
 		conditions = new ArrayList<Integer[]>();
 		answer = new ArrayList<>();
 		this.dico = dico;
@@ -39,8 +47,7 @@ public class Query {
 	/**
 	 * Gets the collection of conditions from a sparql query
 	 * 
-	 * @param query
-	 *            The sparql query from which you want to get the condtions
+	 * @param query The sparql query from which you want to get the condtions
 	 */
 	private void initConditions(String query) {
 
@@ -48,6 +55,9 @@ public class Query {
 
 		boolean accolade = false;
 		int nbConditions = 0;
+
+		double begin = System.nanoTime();
+
 		for (int index = 0; index < tmpWords.length; index++) {
 			if (tmpWords[index].equals("{"))
 				accolade = true;
@@ -62,12 +72,10 @@ public class Query {
 				conditions.get(conditions.size() - 1)[2] = nbConditions;
 			}
 		}
-		
-		/*for(int kndex = 0; kndex < conditions.size() ; kndex++) {
-			Integer[] couple = { conditions.get(kndex)[0] , conditions.get(kndex)[1]};
-			order.put(couple, kndex);
-		}*/
-		
+
+		double end = System.nanoTime();
+
+		parsingTime = end - begin;
 	}
 
 	//////////////////////
@@ -79,49 +87,50 @@ public class Query {
 	 * lowest frequency in the data and the last condition contains the couple P O
 	 * with the highest frequency
 	 * 
-	 * @param POS
-	 *            The index that contains the data
+	 * @param POS The index that contains the data
 	 * 
-	 * @param nbT
-	 *            The number of triples
+	 * @param nbT The number of triples
 	 */
 	public void orderConditions(ThreeURI_Index POS, int nbT) {
 
 		ArrayList<Integer[]> sortedCdt = new ArrayList<>();
+
 		double toCompare;
+
 		int rankToRemove = 0;
-		
 		int loop = conditions.size();
-		
-		for (int jndex = 0; jndex < loop; jndex++) {		
-			
+
+		for (int jndex = 0; jndex < loop; jndex++) {
+
 			Double minFre = 100000.0;
 
 			for (int kndex = 0; kndex < conditions.size(); kndex++) {
-				
-				if (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1]) != null) 					
+
+				if (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1]) != null)
 					toCompare = (double) (POS.get(conditions.get(kndex)[0]).get(conditions.get(kndex)[1])).size()
-							/ (double) nbT;											
-				else toCompare = 0;
-				
-				if (toCompare < minFre) {						
+							/ (double) nbT;
+				else {
+					toBeEvaluated = false;
+					toCompare = 0;
+				}
+
+				if (toCompare < minFre) {
 					minFre = toCompare;
 					rankToRemove = kndex;
 				}
-			}	
-			
-			if(jndex == 0) {
-				if(minFre != 100000) {
+			}
+
+			if (jndex == 0) {
+				if (minFre != 100000) {
 					estimatedSelectivity = 1.0 - minFre;
 					double toto = nbT * minFre;
 					estimatedNumberOfResults = (int) toto;
-				}
-				else {
+				} else {
 					estimatedSelectivity = 1;
 					estimatedNumberOfResults = 0;
 				}
-			}	
-			
+			}
+
 			sortedCdt.add(new Integer[3]);
 			sortedCdt.get(jndex)[0] = conditions.get(rankToRemove)[0];
 			sortedCdt.get(jndex)[1] = conditions.get(rankToRemove)[1];
@@ -179,26 +188,32 @@ public class Query {
 
 		return toShow.toString();
 	}
-	
+
 	public String showQueryStats() {
 		StringBuilder toShow = new StringBuilder();
 
-		toShow.append("Evaluation time : ");
-		toShow.append(evaluationTime + " ns\n");
-		toShow.append("Estimated selectivity : ");
-		toShow.append(estimatedSelectivity + "\n");
-		toShow.append("Estimated number of results : " + estimatedNumberOfResults+"\n");
-		toShow.append("Number of results : " + answer.size()+"\n");
-		
+		toShow.append("Parsing time : " + parsingTime + " ns\n");
+		toShow.append("Evaluation time : " + evaluationTime + " ns\n");
+		toShow.append("Evaluated : " + toBeEvaluated + "\n");
+		toShow.append("Estimated selectivity : " + estimatedSelectivity + "\n");
+		toShow.append("Estimated number of results : " + estimatedNumberOfResults + "\n");
+
+		if (toBeEvaluated)
+			toShow.append("Number of results : " + answer.size() + "\n");
+
 		toShow.append("Conditions order : ");
-		toShow.append(conditions.get(0)[2]);
-		if(conditions.size()>1){
-			for(int index = 1 ; index < conditions.size() ; index++) {
-				toShow.append("-->" + conditions.get(index)[2]);
+		if (toBeEvaluated) {
+			toShow.append(conditions.get(0)[2]);
+			if (conditions.size() > 1) {
+				for (int index = 1; index < conditions.size(); index++) {
+					toShow.append(" --> " + conditions.get(index)[2]);
+				}
 			}
-		}
+		} else
+			toShow.append("The query was not evaluated, no results expected.\n");
+
 		toShow.append("\n\n --------------------------------------- \n\n");
-		
+
 		return toShow.toString();
 	}
 
