@@ -260,7 +260,10 @@ public class Requester {
 
 		for (int index = 0; index < querySet.getSize(); index++) {
 			begQuery = System.nanoTime();
+			
+			//if(querySet.get(index).toBeEvaluated) 
 			queryHandler.getSolutions(querySet.get(index));
+			
 			endQuery = System.nanoTime();
 			querySet.get(index).evaluationTime = endQuery - begQuery;
 		}

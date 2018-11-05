@@ -71,9 +71,6 @@ public class QueryHandler {
 		HashSet<Integer> merged = new HashSet<>();
 		HashSet<Integer> toMerge = new HashSet<>();
 
-		if (query.toBeEvaluated == false)
-			return;
-
 		Double cond1_frequency = p_frequency.get(query.conditions.get(0)[0]);
 		Double cond2_frequency = o_frequency.get(query.conditions.get(0)[1]);
 
