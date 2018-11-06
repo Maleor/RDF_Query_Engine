@@ -111,6 +111,32 @@ public class QuerySet {
 
 		fw.close();
 	}
+	
+	public void showResultsAsURIInCSV(String outputPath) throws IOException {
+
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI_CSV.csv");
+		
+		
+		for (Query query : querySet) {
+			fw.write(query.showQueryOnSingleLine());
+			fw.write(query.showResultAsURIInCSV() + "\n");
+		}
+
+		fw.close();
+	}
+	
+	public void showResultsAsIntegerInCSV(String outputPath) throws IOException {
+
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger_CSV.csv");
+		
+		
+		for (Query query : querySet) {
+			fw.write(query.showQueryOnSingleLine());
+			fw.write(query.showResultAsIntegerInCSV() + "\n");
+		}
+
+		fw.close();
+	}
 
 	/**
 	 * Shows the results as URI of each query in the query set
@@ -120,20 +146,20 @@ public class QuerySet {
 	 * 
 	 * @throws IOException
 	 */
-	public void showResultsAsURI(String outputPath) throws IOException {
+	public void showResultsAsURIInText(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI.csv");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI_text.txt");
 
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
-			fw.write(query.showResultAsURI() + "\n");
+			fw.write(query.showResultAsURIInText() + "\n");
 		}
 
 		fw.close();
 	}
 	
 	public void showStats(String outputPath) throws IOException {
-		FileWriter fw = new FileWriter(outputPath + "/queryStats.csv");
+		FileWriter fw = new FileWriter(outputPath + "/queryStats.txt");
 		
 		fw.write("The selectivity is a value between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
 		fw.write("The selectivity estimation is equal to 1 - (the appearance frequency of the couple P O from the first condition).\n");

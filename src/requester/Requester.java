@@ -97,10 +97,11 @@ public class Requester {
 		querySet = new QuerySet(dictionary);
 		querySet.ParseQueryFile(queryFile);
 
-		for (int index = 0; index < querySet.getSize(); index++)
+		for (int index = 0; index < querySet.getSize(); index++) {
 			querySet.get(index).orderConditions(POS, numberOfTriples);
-
-		queryHandler = new QueryHandler(POS, OPS, o_frequency, p_frequency);
+			querySet.get(index).chooseIndex(p_frequency, o_frequency);
+		}
+		queryHandler = new QueryHandler(POS, OPS);
 	}
 
 	/**
@@ -131,8 +132,8 @@ public class Requester {
 	private void export() throws IOException {
 
 		if (export_results) {
-			querySet.showResultsAsURI(outputPath);
-			querySet.showResultsAsInteger(outputPath);
+			querySet.showResultsAsURIInCSV(outputPath);
+			querySet.showResultsAsIntegerInCSV(outputPath);
 		}
 
 		if (export_stats)
@@ -178,7 +179,7 @@ public class Requester {
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
 
-		fw.write("Initialization of the data ---------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		fw.write("Initialization of the data," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
 		
 		
@@ -200,7 +201,7 @@ public class Requester {
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
 
-		fw.write("Initialization of the dictionary ---> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		fw.write("Initialization of the dictionary," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
 		
 		
@@ -221,7 +222,7 @@ public class Requester {
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin = Instant.now()).toMillis() + " ms");
 
-		fw.write("Initialization of the indexes ------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		fw.write("Initialization of the indexes," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
 		
 		
@@ -243,7 +244,7 @@ public class Requester {
 		if (verbose)
 			System.out.println(Duration.between(t1, Instant.now()).toMillis() + " ms");
 
-		fw.write("Initialization of the query set ----> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		fw.write("Initialization of the query set," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
 		
 		
@@ -256,12 +257,12 @@ public class Requester {
 		t1 = Instant.now();
 		
 		if (verbose)
-			System.out.print("\nEvaluation of the queries ----------> ");
+			System.out.print("\nEvaluation of the queries");
 
 		for (int index = 0; index < querySet.getSize(); index++) {
 			begQuery = System.nanoTime();
 			
-			//if(querySet.get(index).toBeEvaluated) 
+			if(querySet.get(index).toBeEvaluated) 
 			queryHandler.getSolutions(querySet.get(index));
 			
 			endQuery = System.nanoTime();
@@ -270,10 +271,10 @@ public class Requester {
 		
 		t1fin = Instant.now();
 
-		if (verbose)
-			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
+		if (workload_time) 
+			System.out.println("  ---------->" + Duration.between(t1, t1fin).toMillis() + " ms");
 
-		fw.write("Evaluation of the queries ----------> " + Duration.between(t1, t1fin).toMillis() + " ms\n");
+		fw.write("Evaluation of the queries," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
 		
 		
@@ -285,13 +286,10 @@ public class Requester {
 			System.out.println("\nTotal execution time ---------------> "
 					+ Duration.between(beginExec, endExec).toMillis() + " ms");
 
-		fw.write("Total execution time ---------------> " + Duration.between(beginExec, endExec).toMillis() + " ms\n");
+		fw.write("Total execution time," + Duration.between(beginExec, endExec).toMillis() + " ms\n");
 
 		fw.close();
 
-		
-		
-		
 		export();
 		
 	}

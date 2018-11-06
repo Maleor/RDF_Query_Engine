@@ -19,48 +19,66 @@ public class Runner {
 	 */
 	public static void main(String args[]) throws IOException {
 		
-		if ((args.length != 7 && args.length != 2) || (args.length == 1 && args[0].equals("--help"))) {
+		if ((args.length < 3) || (args.length == 1 && args[0].equals("--help"))) {
 			System.err.println(
-					"Usage : File_to_queries File_to_data Output_file Verbose Export_results Export_stats Workload_time\n");
+					"Usage : -queries 'File_to_queries' -data 'File_to_data' output 'Output_file' -verbose -export_results -export_stats -workload_time\n");
 			System.err.println("File_to_queries : The path to the file that contains your queries");
 			System.err.println("File_to_data : The path to the file that contains your data");
 			System.err.println("Output_file : The path to the file in which you want to export your results");
-			System.err.println("Verbose : 1 to show what the program does in the terminal, 0 otherwise");
-			System.err.println("Export_results : 1 to export the results of your queries, 0 otherwise");
-			System.err.println("Export_stats : 1 to export the stats of your queries, 0 otherwise");
+			System.err.println("Verbose (Optional) : to show what the program does in the terminal");
+			System.err.println("Export_results (Optional) : to export the results of your queries");
+			System.err.println("Export_stats (Optional) : to export the stats of your queries");
 			System.err.println(
-					"Workload_time : 1 to visualize the duration that has been necessery to evaluate each query, 0 otherwise");
+					"Workload_time (Optional) : to visualize the duration that has been necessery to evaluate each query");
 			return;
 		}
-
-		if ((!args[3].equals("0")) && (!args[3].equals("1"))) {
-			System.out.println(args[3]);
-			System.err.println("Usage of Verbose : 1 to show what the program does in the terminal, 0 otherwise");
-			return;
-		}
-		if ((!args[4].equals("0")) && (!args[4].equals("1"))) {
-			System.err.println("Usage of Export_results : 1 to export the results of your queries, 0 otherwise");
-			return;
-		}
-		if ((!args[5].equals("0")) && (!args[5].equals("1"))) {
-			System.err.println("Usage of Export_stats : 1 to export the stats of your queries, 0 otherwise");
-			return;
-		}
-		if ((!args[6].equals("0")) && (!args[6].equals("1"))) {
-			System.err.println("Usage of Workload_time : 1 to visualize the duration that "
-					+ "has been necessery to evaluate the queries, 0 otherwise");
-			return;
-		}
-
-		System.out.println("#################################");
-		System.out.println("####### PROGRAM EXECUTION #######");
-		System.out.println("#################################\n");
 		
-		Requester requester = new Requester(args);
+		String[] args2 = new String[7];
+		
+		args2[3] = "0";
+		args2[4] = "0";
+		args2[5] = "0";
+		args2[6] = "0";
+		
+		for(int index = 0 ; index < args.length ; index++) {
+			
+			if(args[index].equals("-queries"))
+				args2[0] = args[index+1];
+			
+			if(args[index].equals("-data"))
+				args2[1] = args[index+1];
+			
+			
+			if(args[index].equals("-output"))
+				args2[2] = args[index+1];
+			
+			if(args[index].equals("-verbose"))
+				args2[3] = "1";
+			
+			if(args[index].equals("-export_results"))
+				args2[4] = "1";
+			
+			if(args[index].equals("-export_stats"))
+				args2[5] = "1";
+			
+			if(args[index].equals("-workload_time"))
+				args2[6] = "1";
+			
+		}
+		
+		if(args2[3].equals("1")) {//if verbose
+			System.out.println("#################################");
+			System.out.println("####### PROGRAM EXECUTION #######");
+			System.out.println("#################################\n");
+		}
+		
+		Requester requester = new Requester(args2);
 		requester.run();
-
-		System.out.println("\n##################################");
-		System.out.println("####### END OF THE PROGRAM #######");
-		System.out.println("##################################");
+		
+		if(args2[3].equals("1")) {//if verbose
+			System.out.println("\n##################################");
+			System.out.println("####### END OF THE PROGRAM #######");
+			System.out.println("##################################");
+		}
 	}
 }

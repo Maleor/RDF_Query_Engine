@@ -19,15 +19,9 @@ public class QueryHandler {
 	private ThreeURI_Index POS;
 	private ThreeURI_Index OPS;
 
-	private SingleURI_Selectivity o_frequency;
-	private SingleURI_Selectivity p_frequency;
-
-	public QueryHandler(ThreeURI_Index POS, ThreeURI_Index OPS, SingleURI_Selectivity o_freq,
-			SingleURI_Selectivity p_freq) {
+	public QueryHandler(ThreeURI_Index POS, ThreeURI_Index OPS) {
 		this.POS = POS;
 		this.OPS = OPS;
-		o_frequency = o_freq;
-		p_frequency = p_freq;
 	}
 
 	///////////////////////
@@ -71,39 +65,32 @@ public class QueryHandler {
 		HashSet<Integer> merged = new HashSet<>();
 		HashSet<Integer> toMerge = new HashSet<>();
 
-		Double cond1_frequency = p_frequency.get(query.conditions.get(0)[0]);
-		Double cond2_frequency = o_frequency.get(query.conditions.get(0)[1]);
-
-		if (cond1_frequency == 0.0 || cond2_frequency == 0.0)
+		if(query.usedIndex.get(0).equals("unexistant"))
 			return;
-
-		if (cond1_frequency < cond2_frequency)
+		
+		if(query.usedIndex.get(0).equals("POS"))
 			merged = getSingleConditionSolutions(POS, query.conditions.get(0));
-		else
+		else 
 			merged = getSingleConditionSolutions(OPS, query.conditions.get(0));
 
 		if (query.conditions.size() > 1 && !merged.isEmpty()) {
 
 			for (int i = 1; i < query.conditions.size(); i++) {
 
-				cond1_frequency = p_frequency.get(query.conditions.get(i)[0]);
-				cond2_frequency = o_frequency.get(query.conditions.get(i)[1]);
-
-				if (cond1_frequency == 0.0 || cond2_frequency == 0.0) {
+				if(query.usedIndex.get(i).equals("unexistant")) {
 					merged = new HashSet<>();
 					break;
 				}
-
-				if (cond1_frequency < cond2_frequency)
+				
+				if(query.usedIndex.get(i).equals("POS"))
 					toMerge = getSingleConditionSolutions(POS, query.conditions.get(i));
-				else
+				else 
 					toMerge = getSingleConditionSolutions(OPS, query.conditions.get(i));
 
 				merged.retainAll(toMerge);
 
 				if (merged.isEmpty())
 					break;
-
 			}
 		}
 		query.answer.addAll(merged);

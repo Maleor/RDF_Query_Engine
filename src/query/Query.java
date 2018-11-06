@@ -2,8 +2,10 @@ package query;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import dictionary.Dictionary;
+import index.SingleURI_Selectivity;
 import index.ThreeURI_Index;
 
 /**
@@ -16,6 +18,8 @@ public class Query {
 
 	public ArrayList<Integer> answer;
 	public ArrayList<Integer[]> conditions;
+
+	public ArrayList<String> usedIndex;
 
 	public double evaluationTime;
 
@@ -33,6 +37,7 @@ public class Query {
 	///////////////////
 
 	public Query(StringBuilder query, Dictionary dico) {
+		usedIndex = new ArrayList<>();
 		toBeEvaluated = true;
 		conditions = new ArrayList<Integer[]>();
 		answer = new ArrayList<>();
@@ -47,7 +52,8 @@ public class Query {
 	/**
 	 * Gets the collection of conditions from a sparql query
 	 * 
-	 * @param query The sparql query from which you want to get the condtions
+	 * @param query
+	 *            The sparql query from which you want to get the condtions
 	 */
 	private void initConditions(String query) {
 
@@ -87,9 +93,11 @@ public class Query {
 	 * lowest frequency in the data and the last condition contains the couple P O
 	 * with the highest frequency
 	 * 
-	 * @param POS The index that contains the data
+	 * @param POS
+	 *            The index that contains the data
 	 * 
-	 * @param nbT The number of triples
+	 * @param nbT
+	 *            The number of triples
 	 */
 	public void orderConditions(ThreeURI_Index POS, int nbT) {
 
@@ -142,6 +150,34 @@ public class Query {
 	}
 
 	/**
+	 * Finds, for each condition, what index has to be used to find the solutions
+	 * 
+	 * @param p_frequency
+	 *            The predicates frequency
+	 *            
+	 * @param o_frequency
+	 *            The objects frequency
+	 */
+	public void chooseIndex(SingleURI_Selectivity p_frequency, SingleURI_Selectivity o_frequency) {
+
+		for (int jndex = 0; jndex < conditions.size(); jndex++) {
+
+			double cond1_frequency = p_frequency.get(conditions.get(jndex)[0]);
+			double cond2_frequency = o_frequency.get(conditions.get(jndex)[1]);
+
+			if (cond1_frequency == 0.0 || cond2_frequency == 0.0) {
+				usedIndex.add("unexistant");
+			}
+			else if (cond1_frequency < cond2_frequency) {
+				usedIndex.add("POS");
+			} 
+			else {
+				usedIndex.add("OPS");
+			}
+		}
+	}
+
+	/**
 	 * Transforms the condition collection of the query into a full SPARQL query
 	 * 
 	 * @return the query as a String
@@ -161,6 +197,27 @@ public class Query {
 		return toShow.toString();
 	}
 
+	/**
+	 * Transforms the condition collection of the query into a full SPARQL query,
+	 * written on a single line for csv
+	 * 
+	 * @return the query as a String
+	 */
+	public String showQueryOnSingleLine() {
+
+		StringBuilder toShow = new StringBuilder();
+
+		toShow.append("SELECT ?v0 WHERE { ");
+
+		for (int index = 0; index < conditions.size(); index++) {
+			toShow.append("?v0 ");
+			toShow.append("<" + dico.getURI(conditions.get(index)[0]) + "> ");
+			toShow.append("<" + dico.getURI(conditions.get(index)[1]) + "> . ");
+		}
+		toShow.append("}");
+		return toShow.toString();
+	}
+
 	public String showResultAsInteger() {
 
 		StringBuilder toShow = new StringBuilder();
@@ -175,7 +232,27 @@ public class Query {
 		return toShow.toString();
 	}
 
-	public String showResultAsURI() {
+	public String showResultAsIntegerInCSV() {
+
+		StringBuilder toShow = new StringBuilder();
+
+		for (Integer i : answer)
+			toShow.append("," + i);
+
+		return toShow.toString();
+	}
+
+	public String showResultAsURIInCSV() {
+
+		StringBuilder toShow = new StringBuilder();
+
+		for (Integer i : answer)
+			toShow.append("," + dico.getURI(i));
+
+		return toShow.toString();
+	}
+
+	public String showResultAsURIInText() {
 
 		StringBuilder toShow = new StringBuilder();
 
@@ -203,10 +280,10 @@ public class Query {
 
 		toShow.append("Conditions order : ");
 		if (toBeEvaluated) {
-			toShow.append(conditions.get(0)[2]);
+			toShow.append(conditions.get(0)[2] + "(" + usedIndex.get(0) + ")");
 			if (conditions.size() > 1) {
 				for (int index = 1; index < conditions.size(); index++) {
-					toShow.append(" --> " + conditions.get(index)[2]);
+					toShow.append(" --> " + conditions.get(index)[2] + "(" + usedIndex.get(index) + ")");
 				}
 			}
 		} else
