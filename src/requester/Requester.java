@@ -260,12 +260,12 @@ public class Requester {
 			System.out.print("\nEvaluation of the queries");
 
 		for (int index = 0; index < querySet.getSize(); index++) {
-			begQuery = System.nanoTime();
+			begQuery = System.currentTimeMillis();
 			
 			if(querySet.get(index).toBeEvaluated) 
 			queryHandler.getSolutions(querySet.get(index));
 			
-			endQuery = System.nanoTime();
+			endQuery = System.currentTimeMillis();
 			querySet.get(index).evaluationTime = endQuery - begQuery;
 		}
 		
@@ -292,6 +292,6 @@ public class Requester {
 
 		export();
 		
+		System.out.println(querySet.getSize());
 	}
-
 }

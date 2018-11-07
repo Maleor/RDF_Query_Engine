@@ -49,7 +49,13 @@ public class QuerySet {
 		
 		Scanner scanner;
 		
+		
+		
 		for (File f : fi) {
+			
+			boolean accolade = true;
+			
+			//System.out.println("-- " + f.getAbsolutePath());
 
 			scanner = new Scanner(new File(f.getPath()));
 
@@ -59,17 +65,27 @@ public class QuerySet {
 
 				String line = scanner.nextLine();
 
-				if ((line.contains("select"))
-						|| (line.contains("SELECT"))) /* if a line starts with 'select' then we create a new query */
+				if ( (line.contains("select")) || (line.contains("SELECT"))) { /* if a line starts with 'select' then we create a new query */
+					if(!accolade) {
+						querySet.add(new Query(stringB, dico));
+					}
+					accolade = false;
 					stringB = new StringBuilder();
+				}
 
 				stringB.append(line);
 
 				if (line.contains("}")) {
+					accolade = true;
 					querySet.add(new Query(stringB, dico));
+					stringB = new StringBuilder();
 				}
-
 			}
+			if(stringB.length() > 6) 
+				querySet.add(new Query(stringB, dico));
+			
+			//System.out.println("nbr de requetes : " + querySet.size());
+			
 		}
 	}
 
@@ -101,7 +117,7 @@ public class QuerySet {
 	 */
 	public void showResultsAsInteger(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger.csv");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger_text.txt");
 		
 		
 		for (Query query : querySet) {
@@ -114,7 +130,7 @@ public class QuerySet {
 	
 	public void showResultsAsURIInCSV(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI_CSV.csv");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI.csv");
 		
 		
 		for (Query query : querySet) {
@@ -127,7 +143,7 @@ public class QuerySet {
 	
 	public void showResultsAsIntegerInCSV(String outputPath) throws IOException {
 
-		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger_CSV.csv");
+		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger.csv");
 		
 		
 		for (Query query : querySet) {
