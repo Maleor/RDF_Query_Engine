@@ -64,10 +64,7 @@ public class QueryHandler {
 
 		HashSet<Integer> merged = new HashSet<>();
 		HashSet<Integer> toMerge = new HashSet<>();
-
-		if(query.usedIndex.get(0).equals("unexistant"))
-			return;
-		
+	
 		if(query.usedIndex.get(0).equals("POS"))
 			merged = getSingleConditionSolutions(POS, query.conditions.get(0));
 		else 
@@ -76,11 +73,6 @@ public class QueryHandler {
 		if (query.conditions.size() > 1 && !merged.isEmpty()) {
 
 			for (int i = 1; i < query.conditions.size(); i++) {
-
-				if(query.usedIndex.get(i).equals("unexistant")) {
-					merged = new HashSet<>();
-					break;
-				}
 				
 				if(query.usedIndex.get(i).equals("POS"))
 					toMerge = getSingleConditionSolutions(POS, query.conditions.get(i));

@@ -3,9 +3,12 @@ package requester;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Formatter;
 import java.util.HashSet;
 
 import dataParser.RDFRawParser;
@@ -151,9 +154,8 @@ public class Requester {
 	 * 
 	 */
 	public void run() throws IOException {
-
-		double begQuery;
-		double endQuery;
+		
+		
 
 		Instant beginExec = Instant.now();
 		Instant endExec;
@@ -260,17 +262,20 @@ public class Requester {
 			System.out.print("\nEvaluation of the queries");
 
 		for (int index = 0; index < querySet.getSize(); index++) {
-			begQuery = System.currentTimeMillis();
+//			begQuery = System.currentTimeMillis();
 			
 			if(querySet.get(index).toBeEvaluated) 
-			queryHandler.getSolutions(querySet.get(index));
+				queryHandler.getSolutions(querySet.get(index));
 			
-			endQuery = System.currentTimeMillis();
-			querySet.get(index).evaluationTime = endQuery - begQuery;
+//			endQuery = System.currentTimeMillis();
+//			querySet.get(index).evaluationTime = endQuery - begQuery;
 		}
+		
 		
 		t1fin = Instant.now();
 
+		querySet.computeFrequencies(Duration.between(t1, t1fin).toMillis());
+		
 		if (workload_time) 
 			System.out.println("  ---------->" + Duration.between(t1, t1fin).toMillis() + " ms");
 
@@ -291,7 +296,6 @@ public class Requester {
 		fw.close();
 
 		export();
-		
-		System.out.println(querySet.getSize());
+
 	}
 }

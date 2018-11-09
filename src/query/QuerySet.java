@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -21,6 +23,8 @@ public class QuerySet {
 
 	private Dictionary dico;
 
+	public int nbrEmpty;
+
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
@@ -29,10 +33,28 @@ public class QuerySet {
 		this.dico = dico;
 		querySet = new ArrayList<>();
 	}
-
+	
+	
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
+	
+	public void computeFrequencies(double timeEv) {
+		
+		
+		for(Query query : querySet) {
+			if(!query.toBeEvaluated) {
+				query.evaluationTime = 0.0;
+				nbrEmpty++;
+			}
+		}
+		
+		for(Query query : querySet) {
+			if(query.toBeEvaluated)
+				query.evaluationTime = timeEv/(double)(querySet.size() - nbrEmpty);
+		}
+	}
+
 
 	/**
 	 * 
@@ -46,16 +68,12 @@ public class QuerySet {
 		File files = new File(file);
 
 		File[] fi = files.listFiles();
-		
+
 		Scanner scanner;
-		
-		
-		
+
 		for (File f : fi) {
-			
+
 			boolean accolade = true;
-			
-			//System.out.println("-- " + f.getAbsolutePath());
 
 			scanner = new Scanner(new File(f.getPath()));
 
@@ -65,8 +83,9 @@ public class QuerySet {
 
 				String line = scanner.nextLine();
 
-				if ( (line.contains("select")) || (line.contains("SELECT"))) { /* if a line starts with 'select' then we create a new query */
-					if(!accolade) {
+				if ((line.contains("select"))
+						|| (line.contains("SELECT"))) { /* if a line starts with 'select' then we create a new query */
+					if (!accolade) {
 						querySet.add(new Query(stringB, dico));
 					}
 					accolade = false;
@@ -81,11 +100,8 @@ public class QuerySet {
 					stringB = new StringBuilder();
 				}
 			}
-			if(stringB.length() > 6) 
+			if (stringB.length() > 6)
 				querySet.add(new Query(stringB, dico));
-			
-			//System.out.println("nbr de requetes : " + querySet.size());
-			
 		}
 	}
 
@@ -118,8 +134,7 @@ public class QuerySet {
 	public void showResultsAsInteger(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger_text.txt");
-		
-		
+
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showResultAsInteger() + "\n");
@@ -127,12 +142,11 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	public void showResultsAsURIInCSV(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsURI.csv");
-		
-		
+
 		for (Query query : querySet) {
 			fw.write(query.showQueryOnSingleLine());
 			fw.write(query.showResultAsURIInCSV() + "\n");
@@ -140,12 +154,11 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	public void showResultsAsIntegerInCSV(String outputPath) throws IOException {
 
 		FileWriter fw = new FileWriter(outputPath + "/resultsAsInteger.csv");
-		
-		
+
 		for (Query query : querySet) {
 			fw.write(query.showQueryOnSingleLine());
 			fw.write(query.showResultAsIntegerInCSV() + "\n");
@@ -173,15 +186,16 @@ public class QuerySet {
 
 		fw.close();
 	}
-	
+
 	public void showStats(String outputPath) throws IOException {
 		FileWriter fw = new FileWriter(outputPath + "/queryStats.txt");
-		
-		fw.write("The selectivity is a value between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
-		fw.write("The selectivity estimation is equal to 1 - (the appearance frequency of the couple P O from the first condition).\n");
+
+		fw.write(
+				"The selectivity is a value between 0 and 1, the bigger it is, the smaller is the set of solutions.\n");
+		fw.write(
+				"The selectivity estimation is equal to 1 - (the appearance frequency of the couple P O from the first condition).\n");
 		fw.write("If the estimation is equal to 1, then the set of solution is empty.\n\n");
-		
-		
+
 		for (Query query : querySet) {
 			fw.write(query.showQuery() + "\n");
 			fw.write(query.showQueryStats() + "\n");

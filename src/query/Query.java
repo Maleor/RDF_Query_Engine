@@ -1,5 +1,7 @@
 package query;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -150,11 +152,13 @@ public class Query {
 	}
 
 	/**
-	 * Finds, for each condition, what index has to be used to find the solutions
+	 * Finds, for each condition, what index has to be used to find the solutions If
+	 * a frequency is equal to 0, we consider that no index has to be used and then
+	 * the query will not be evaluated
 	 * 
 	 * @param p_frequency
 	 *            The predicates frequency
-	 *            
+	 * 
 	 * @param o_frequency
 	 *            The objects frequency
 	 */
@@ -166,12 +170,10 @@ public class Query {
 			double cond2_frequency = o_frequency.get(conditions.get(jndex)[1]);
 
 			if (cond1_frequency == 0.0 || cond2_frequency == 0.0) {
-				usedIndex.add("unexistant");
-			}
-			else if (cond1_frequency < cond2_frequency) {
+				toBeEvaluated = false;
+			} else if (cond1_frequency < cond2_frequency) {
 				usedIndex.add("POS");
-			} 
-			else {
+			} else {
 				usedIndex.add("OPS");
 			}
 		}
@@ -267,10 +269,13 @@ public class Query {
 	}
 
 	public String showQueryStats() {
+		
+		NumberFormat format = new DecimalFormat("#0.000");
+		
 		StringBuilder toShow = new StringBuilder();
 
 		toShow.append("Parsing time : " + parsingTime + " ns\n");
-		toShow.append("Evaluation time : " + evaluationTime + " ns\n");
+		toShow.append("Evaluation time : " + format.format(evaluationTime) + " ms\n");
 		toShow.append("Evaluated : " + toBeEvaluated + "\n");
 		toShow.append("Estimated selectivity : " + estimatedSelectivity + "\n");
 		toShow.append("Estimated number of results : " + estimatedNumberOfResults + "\n");
