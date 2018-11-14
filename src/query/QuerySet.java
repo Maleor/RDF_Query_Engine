@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 import dictionary.Dictionary;
@@ -39,7 +40,7 @@ public class QuerySet {
 	/** PUBLIC METHODS **/
 	//////////////////////
 	
-	public void computeFrequencies(double timeEv) {
+	public void computeEvaluationTime(double timeEv) {
 		
 		
 		for(Query query : querySet) {
@@ -103,6 +104,28 @@ public class QuerySet {
 			if (stringB.length() > 6)
 				querySet.add(new Query(stringB, dico));
 		}
+	}
+	
+	/**
+	 * Randomizes the queries contained into the queries set.
+	 * This method should not be used.
+	 * 
+	 * @param qs
+	 */
+	@Deprecated
+	public void randomizeQuerySet(QuerySet qs) {
+		int size = qs.querySet.size();
+		int random;
+		Random rand = new Random();
+		ArrayList<Query> finalList = new ArrayList<>();
+		
+		for(int index = 0 ; index < size ; index++) {
+			random = rand.nextInt(qs.querySet.size());
+			finalList.add(qs.querySet.get(random));
+			qs.querySet.remove(random);
+		}
+		
+		qs.querySet = finalList;
 	}
 
 	/**

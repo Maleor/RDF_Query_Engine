@@ -11,5 +11,20 @@
 	<classpathentry kind="lib" path="lib/libraries/sesame-util-2.7.11.jar"/>
 	<classpathentry kind="lib" path="lib/libraries/slf4j-api-1.6.4.jar"/>
 	<classpathentry kind="lib" path="lib/libraries/slf4j-simple-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/commons-codec-1.6.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/httpclient-4.2.3.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/httpcore-4.2.2.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jcl-over-slf4j-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jena-arq-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jena-core-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jena-iri-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jena-sdb-1.4.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/jena-tdb-1.0.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/owlapi-distribution-3.4.10.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/slf4j-log4j12-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/xercesImpl-2.11.0.jar"/>
+	<classpathentry kind="lib" path="/auto_home/mdodard/workspace/jena/xml-apis-1.4.01.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

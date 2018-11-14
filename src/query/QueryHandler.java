@@ -64,7 +64,7 @@ public class QueryHandler {
 
 		HashSet<Integer> merged = new HashSet<>();
 		HashSet<Integer> toMerge = new HashSet<>();
-	
+
 		if(query.usedIndex.get(0).equals("POS"))
 			merged = getSingleConditionSolutions(POS, query.conditions.get(0));
 		else 
@@ -84,7 +84,7 @@ public class QueryHandler {
 				if (merged.isEmpty())
 					break;
 			}
-		}
+		}	
 		query.answer.addAll(merged);
 	}
 }

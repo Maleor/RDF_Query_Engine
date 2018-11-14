@@ -3,11 +3,13 @@ package requester;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.HashSet;
 
@@ -18,6 +20,7 @@ import index.ThreeURI_Index;
 import index.ThreeURI_Index.INDEX_TYPE;
 import query.QueryHandler;
 import query.QuerySet;
+import jenaTest.CompareJena;
 
 /**
  * 
@@ -55,6 +58,8 @@ public class Requester {
 	public boolean export_stats;
 	public boolean workload_time;
 
+	FileWriter fw;
+
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
@@ -71,6 +76,10 @@ public class Requester {
 		export_stats = args[5].equals("1") ? true : false;
 		workload_time = args[6].equals("1") ? true : false;
 	}
+
+	///////////////////////
+	/** PRIVATE METHODS **/
+	///////////////////////
 
 	/**
 	 * Initializes the structures that contain the data
@@ -97,14 +106,44 @@ public class Requester {
 	 */
 	private void initQuerySet() throws FileNotFoundException {
 
+		if (verbose)
+			System.out.print("--- Parsing of the queries files ---> ");
+
 		querySet = new QuerySet(dictionary);
+		Instant beg = Instant.now();
 		querySet.ParseQueryFile(queryFile);
+		Instant end = Instant.now();
+
+		if (verbose)
+			System.out.println(Duration.between(beg, end).toMillis() + " ms");
+
+		try {
+			fw.write("Parsing of the queries files," + Duration.between(beg, end).toMillis() + " ms\n");
+		} catch (IOException e) {
+		}
+
+		if (verbose)
+			System.out.print("--- Optimization of the queries ----> ");
+
+		beg = Instant.now();
 
 		for (int index = 0; index < querySet.getSize(); index++) {
 			querySet.get(index).orderConditions(POS, numberOfTriples);
 			querySet.get(index).chooseIndex(p_frequency, o_frequency);
 		}
+
+		end = Instant.now();
+
+		if (verbose)
+			System.out.println(Duration.between(beg, end).toMillis() + " ms");
+
+		try {
+			fw.write("Optimization of the queries," + Duration.between(beg, end).toMillis() + " ms\n");
+		} catch (IOException e) {
+		}
+
 		queryHandler = new QueryHandler(POS, OPS);
+		Collections.shuffle(querySet.querySet);
 	}
 
 	/**
@@ -143,6 +182,54 @@ public class Requester {
 			querySet.showStats(outputPath);
 	}
 
+	/**
+	 * Evaluates a random set of query with 10% of the queries contained in the0
+	 */
+	private void evaluationWarmer() {
+
+		QuerySet qs = new QuerySet(dictionary);
+
+		for (int index = 0; index < (int) (querySet.querySet.size() / 10); index++)
+			qs.querySet.add(querySet.querySet.get(index));
+
+		for (int jndex = 0; jndex < qs.querySet.size(); jndex++)
+			if (querySet.get(jndex).toBeEvaluated)
+				queryHandler.getSolutions(qs.get(jndex));
+
+	}
+
+	private void systemWarmer() {
+		evaluationWarmer();
+		Collections.shuffle(querySet.querySet);
+	}
+
+	private void compareWithJena() throws FileNotFoundException, UnsupportedEncodingException {
+
+		if (verbose)
+			System.out.println("Comparing with Jena");
+
+		CompareJena cp = new CompareJena();
+
+		boolean same = true;
+
+		for (int index = 0; index < querySet.getSize(); index++) {
+
+			ArrayList<String> resStr = new ArrayList<>();
+			for (Integer i : querySet.get(index).answer)
+				resStr.add(dictionary.getURI(i));
+
+			if (!cp.compare(querySet.get(index).showQuery(), dataFile, resStr)) {
+				same = false;
+				break;
+			}
+		}
+
+		if (same)
+			System.out.println("This system and Jena return the same results");
+		else
+			System.out.println("This system and Jena do not return the same results");
+	}
+
 	//////////////////////
 	/** PUBLIC METHODS **/
 	//////////////////////
@@ -154,28 +241,21 @@ public class Requester {
 	 * 
 	 */
 	public void run() throws IOException {
-		
-		
 
 		Instant beginExec = Instant.now();
 		Instant endExec;
 		Instant t1 = Instant.now();
 		Instant t1fin;
 
-		FileWriter fw = new FileWriter(outputPath + "/executionStats.csv");
+		fw = new FileWriter(outputPath + "/executionStats.csv");
 
-		
-		
-		
 		/*************** Init data ***************/
 
-		
-				
 		if (verbose)
 			System.out.print("Initialization of the data ---------> ");
-		
+
 		initData();
-		
+
 		t1fin = Instant.now();
 
 		if (verbose)
@@ -183,109 +263,75 @@ public class Requester {
 
 		fw.write("Initialization of the data," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		
-		
-		
 		/*************** Init dico ***************/
 
-		
-		
-		
 		t1 = Instant.now();
-		
+
 		if (verbose)
 			System.out.print("Initialization of the dictionary ---> ");
-		
+
 		dictionary = new Dictionary(fullData);
-		
+
 		t1fin = Instant.now();
-		
+
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin).toMillis() + " ms");
 
 		fw.write("Initialization of the dictionary," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		
-		
-		
 		/*************** Init indexes ***************/
 
-		
-		
-		
 		t1 = Instant.now();
-		
+
 		if (verbose)
 			System.out.print("Initialization of the indexes ------> ");
-		
+
 		initIndexes();
 		t1fin = Instant.now();
-		
+
 		if (verbose)
 			System.out.println(Duration.between(t1, t1fin = Instant.now()).toMillis() + " ms");
 
 		fw.write("Initialization of the indexes," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		
-		
-		
 		/*************** Init query set ***************/
 
-		
-		
-		
 		t1 = Instant.now();
-		
+
 		if (verbose)
-			System.out.print("Initialization of the query set ----> ");
-		
+			System.out.println("Initialization of the query set");
+
 		initQuerySet();
-		
-		t1fin = Instant.now();
-		
-		if (verbose)
-			System.out.println(Duration.between(t1, Instant.now()).toMillis() + " ms");
 
-		fw.write("Initialization of the query set," + Duration.between(t1, t1fin).toMillis() + " ms\n");
-
-		
-		
-		
 		/*************** Evaluation of the queries ***************/
 
-		
-		
-		
 		t1 = Instant.now();
-		
+		systemWarmer();
+		t1fin = Instant.now();
+
+		t1 = Instant.now();
+
 		if (verbose)
 			System.out.print("\nEvaluation of the queries");
 
 		for (int index = 0; index < querySet.getSize(); index++) {
-//			begQuery = System.currentTimeMillis();
-			
-			if(querySet.get(index).toBeEvaluated) 
+			if (querySet.get(index).toBeEvaluated) {
 				queryHandler.getSolutions(querySet.get(index));
-			
-//			endQuery = System.currentTimeMillis();
-//			querySet.get(index).evaluationTime = endQuery - begQuery;
+			}
 		}
-		
-		
+
 		t1fin = Instant.now();
 
-		querySet.computeFrequencies(Duration.between(t1, t1fin).toMillis());
-		
-		if (workload_time) 
+		querySet.computeEvaluationTime(Duration.between(t1, t1fin).toMillis());
+
+		if (workload_time)
 			System.out.println("  ---------->" + Duration.between(t1, t1fin).toMillis() + " ms");
 
 		fw.write("Evaluation of the queries," + Duration.between(t1, t1fin).toMillis() + " ms\n");
 
-		
-		
-		
-		
 		endExec = Instant.now();
+
+		compareWithJena();
 
 		if (verbose)
 			System.out.println("\nTotal execution time ---------------> "
@@ -296,6 +342,5 @@ public class Requester {
 		fw.close();
 
 		export();
-
 	}
 }

@@ -30,7 +30,6 @@ public class Query {
 	private Dictionary dico;
 
 	private double estimatedSelectivity;
-	private double parsingTime;
 
 	private int estimatedNumberOfResults;
 
@@ -63,9 +62,6 @@ public class Query {
 
 		boolean accolade = false;
 		int nbConditions = 0;
-
-		double begin = System.nanoTime();
-
 		for (int index = 0; index < tmpWords.length; index++) {
 			if (tmpWords[index].equals("{"))
 				accolade = true;
@@ -75,15 +71,15 @@ public class Query {
 				conditions.add(new Integer[3]);
 				String cnd1 = tmpWords[index + 1].substring(1, tmpWords[index + 1].length() - 1);
 				String cnd2 = tmpWords[index + 2].substring(1, tmpWords[index + 2].length() - 1);
+				
+				if(dico.getID(cnd1) == null || dico.getID(cnd2) == null)
+					toBeEvaluated = false;
+				
 				conditions.get(conditions.size() - 1)[0] = dico.getID(cnd1);
 				conditions.get(conditions.size() - 1)[1] = dico.getID(cnd2);
 				conditions.get(conditions.size() - 1)[2] = nbConditions;
 			}
 		}
-
-		double end = System.nanoTime();
-
-		parsingTime = end - begin;
 	}
 
 	//////////////////////
@@ -274,7 +270,6 @@ public class Query {
 		
 		StringBuilder toShow = new StringBuilder();
 
-		toShow.append("Parsing time : " + parsingTime + " ns\n");
 		toShow.append("Evaluation time : " + format.format(evaluationTime) + " ms\n");
 		toShow.append("Evaluated : " + toBeEvaluated + "\n");
 		toShow.append("Estimated selectivity : " + estimatedSelectivity + "\n");
