@@ -266,7 +266,7 @@ public class Query {
 
 	public String showQueryStats() {
 		
-		NumberFormat format = new DecimalFormat("#0.000");
+		NumberFormat format = new DecimalFormat("#0.0000");
 		
 		StringBuilder toShow = new StringBuilder();
 

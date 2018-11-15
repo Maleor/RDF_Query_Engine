@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import com.hp.hpl.jena.query.QueryExecution;
 import com.hp.hpl.jena.query.QueryExecutionFactory;
@@ -13,6 +14,10 @@ import com.hp.hpl.jena.rdf.model.Model;
 import com.hp.hpl.jena.rdf.model.ModelFactory;
 import com.hp.hpl.jena.util.FileManager;
 
+import dictionary.Dictionary;
+import query.Query;
+import query.QuerySet;
+
 /**
  * 
  * @author Mathieu Dodard
@@ -21,13 +26,18 @@ import com.hp.hpl.jena.util.FileManager;
  */
 public class CompareJena {
 
-	double timeForJena;
+	public double timeForJena;
+	Dictionary dico;
+	ArrayList<HashSet<Integer>> jenaRes;
 
 	///////////////////
 	/** CONSTRUCTOR **/
 	///////////////////
 
-	public CompareJena() {
+	public CompareJena(Dictionary dico) {
+		jenaRes = new ArrayList<>();
+		this.dico = dico;
+		timeForJena = 0.0;
 	}
 
 	///////////////////////
@@ -35,7 +45,7 @@ public class CompareJena {
 	///////////////////////
 
 	/**
-	 * Compares 2 lists of solutions
+	 * Compares the results of the 2 systems
 	 * 
 	 * @param jena
 	 *            The list of solutions returned by Jena
@@ -45,35 +55,34 @@ public class CompareJena {
 	 * 
 	 * @return true if they are the same, false otherwise
 	 */
-	private boolean compareLists(ArrayList<String> jena, ArrayList<String> ours) {
+	private boolean compareLists(QuerySet queries) {
 
-		ArrayList<String> save = new ArrayList<>(jena);
-
-		jena.retainAll(ours);
-
-		return jena.equals(save);
+		boolean res = true;
+		
+		for(int index = 0 ; index < queries.getSize() ; index++) {		
+			HashSet<Integer> sysRes = new HashSet<>();
+			sysRes.addAll(queries.get(index).answer);
+			
+			if(!sysRes.equals(jenaRes.get(index)))
+				res = false;
+		}
+		return res;
 	}
 
 	/**
-	 * Executes Jena with the given query
+	 * Executes Jena with the given set of queries
 	 * 
 	 * @param queryS
-	 *            The query you want to evaluate
+	 *            The queries you want to evaluate
 	 * 
 	 * @param data
 	 *            The path to the file that contains the data
-	 * 
-	 * @return The solutions of the query
-	 * 
+
 	 * @throws FileNotFoundException
 	 * @throws UnsupportedEncodingException
 	 */
-	private ArrayList<String> execJena(String queryS, String data)
+	private void execJena(ArrayList<String> queries, String data)
 			throws FileNotFoundException, UnsupportedEncodingException {
-
-		ArrayList<String> toReturn = new ArrayList<>();
-
-		String q = queryS;
 
 		Model model = ModelFactory.createDefaultModel();
 
@@ -83,26 +92,26 @@ public class CompareJena {
 
 		model.read(in, null);
 
-		com.hp.hpl.jena.query.Query query = QueryFactory.create(q);
+		 
 
-		QueryExecution qexec = QueryExecutionFactory.create(query, model);
+		for (String q : queries) {
+			
+			com.hp.hpl.jena.query.Query query = QueryFactory.create(q);
 
-		try {
+			QueryExecution qexec = QueryExecutionFactory.create(query, model);
+
+			double beg = System.currentTimeMillis();
+
 			com.hp.hpl.jena.query.ResultSet rs = qexec.execSelect();
 
-			// ResultSetFormatter.out(System.out, rs, query);
+			timeForJena = timeForJena + (System.currentTimeMillis() - beg);
 
+			jenaRes.add(new HashSet<>());
 			while (rs.hasNext()) {
 				QuerySolution qs = rs.next();
-				toReturn.add(qs.get("v0").toString());
+				jenaRes.get(jenaRes.size()-1).add(dico.getID(qs.get("v0").toString()));
 			}
-
-		} finally {
-
-			qexec.close();
 		}
-
-		return toReturn;
 	}
 
 	//////////////////////
@@ -110,30 +119,34 @@ public class CompareJena {
 	//////////////////////
 
 	/**
-	 * Compares your results of a query with the results given bu Jena
+	 * Compares your results with Jena's
 	 * 
-	 * @param query
-	 *            The query you want to evaluate
-	 *            
+	 * @param queries
+	 *            The queries you want to evaluate
+	 * 
 	 * @param data
 	 *            The path to the file that contains the data
-	 *            
-	 * @param results
-	 *            The results your system returned
 	 * 
 	 * @return true if the results are the same, false otherwise
 	 * 
 	 * @throws FileNotFoundException
 	 * @throws UnsupportedEncodingException
 	 */
-	public boolean compare(String query, String data, ArrayList<String> results)
+	public boolean compare(QuerySet queries, String data)
 			throws FileNotFoundException, UnsupportedEncodingException {
 
-		boolean res;
+		boolean res = true;
+		
+		ArrayList<String> strQ = new ArrayList<>();
+		
+		for(Query q : queries.querySet) {
+			strQ.add(q.showQuery());
+		}
 
-		ArrayList<String> jena = execJena(query, data);
+		execJena(strQ, data);
 
-		res = compareLists(jena, results);
+		
+		res = compareLists(queries);
 
 		return res;
 	}

@@ -205,29 +205,28 @@ public class Requester {
 
 	private void compareWithJena() throws FileNotFoundException, UnsupportedEncodingException {
 
+		NumberFormat format = new DecimalFormat("#0.0000");
+		
 		if (verbose)
-			System.out.println("Comparing with Jena");
+			System.out.println("\nComparing with Jena");
 
-		CompareJena cp = new CompareJena();
+		CompareJena cp = new CompareJena(dictionary);
 
 		boolean same = true;
 
-		for (int index = 0; index < querySet.getSize(); index++) {
-
-			ArrayList<String> resStr = new ArrayList<>();
-			for (Integer i : querySet.get(index).answer)
-				resStr.add(dictionary.getURI(i));
-
-			if (!cp.compare(querySet.get(index).showQuery(), dataFile, resStr)) {
-				same = false;
-				break;
-			}
+		if (!cp.compare(querySet, dataFile)) {
+			same = false;
 		}
 
-		if (same)
-			System.out.println("This system and Jena return the same results");
-		else
-			System.out.println("This system and Jena do not return the same results");
+		if (verbose) {
+			System.out.println("--- Time for Jena to evaluate the queries : " + cp.timeForJena + " ms");
+			System.out.println("--- Which is approximately " + format.format(cp.timeForJena / numberOfTriples) + " ms per query");
+
+			if (same)
+				System.out.println("--- This system and Jena return the same results");
+			else
+				System.out.println("--- This system and Jena do not return the same results");
+		}
 	}
 
 	//////////////////////
