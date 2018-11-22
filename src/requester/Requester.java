@@ -10,7 +10,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Formatter;
 import java.util.HashSet;
 
 import dataParser.RDFRawParser;
@@ -18,9 +17,9 @@ import dictionary.Dictionary;
 import index.SingleURI_Selectivity;
 import index.ThreeURI_Index;
 import index.ThreeURI_Index.INDEX_TYPE;
+import jenaTest.CompareJena;
 import query.QueryHandler;
 import query.QuerySet;
-import jenaTest.CompareJena;
 
 /**
  * 
@@ -57,6 +56,7 @@ public class Requester {
 	public boolean export_results;
 	public boolean export_stats;
 	public boolean workload_time;
+	public boolean jena;
 
 	FileWriter fw;
 
@@ -75,6 +75,7 @@ public class Requester {
 		export_results = args[4].equals("1") ? true : false;
 		export_stats = args[5].equals("1") ? true : false;
 		workload_time = args[6].equals("1") ? true : false;
+		jena = args[7].equals("1") ? true : false;
 	}
 
 	///////////////////////
@@ -206,7 +207,7 @@ public class Requester {
 	private void compareWithJena() throws FileNotFoundException, UnsupportedEncodingException {
 
 		NumberFormat format = new DecimalFormat("#0.0000");
-		
+
 		if (verbose)
 			System.out.println("\nComparing with Jena");
 
@@ -220,7 +221,8 @@ public class Requester {
 
 		if (verbose) {
 			System.out.println("--- Time for Jena to evaluate the queries : " + cp.timeForJena + " ms");
-			System.out.println("--- Which is approximately " + format.format(cp.timeForJena / numberOfTriples) + " ms per query");
+			System.out.println(
+					"--- Which is approximately " + format.format(cp.timeForJena / numberOfTriples) + " ms per query");
 
 			if (same)
 				System.out.println("--- This system and Jena return the same results");
@@ -330,7 +332,8 @@ public class Requester {
 
 		endExec = Instant.now();
 
-		compareWithJena();
+		if (jena)
+			compareWithJena();
 
 		if (verbose)
 			System.out.println("\nTotal execution time ---------------> "

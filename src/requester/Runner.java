@@ -21,7 +21,7 @@ public class Runner {
 		
 		if ((args.length < 3) || (args.length == 1 && args[0].equals("--help"))) {
 			System.err.println(
-					"Usage : -queries 'File_to_queries' -data 'File_to_data' output 'Output_file' -verbose -export_results -export_stats -workload_time\n");
+					"Usage : -queries 'File_to_queries' -data 'File_to_data' output 'Output_file' -verbose -export_results -export_stats -workload_time -jena\n");
 			System.err.println("File_to_queries : The path to the file that contains your queries");
 			System.err.println("File_to_data : The path to the file that contains your data");
 			System.err.println("Output_file : The path to the file in which you want to export your results");
@@ -30,15 +30,18 @@ public class Runner {
 			System.err.println("Export_stats (Optional) : to export the stats of your queries");
 			System.err.println(
 					"Workload_time (Optional) : to visualize the duration that has been necessery to evaluate each query");
+			System.err.println(
+					"Jena (Optional) : to compare your system's results with Jena's");
 			return;
 		}
 		
-		String[] args2 = new String[7];
+		String[] args2 = new String[8];
 		
 		args2[3] = "0";
 		args2[4] = "0";
 		args2[5] = "0";
 		args2[6] = "0";
+		args2[7] = "0";
 		
 		for(int index = 0 ; index < args.length ; index++) {
 			
@@ -63,6 +66,9 @@ public class Runner {
 			
 			if(args[index].equals("-workload_time"))
 				args2[6] = "1";
+			
+			if(args[index].equals("-jena"))
+				args2[7] = "1";
 			
 		}
 		
