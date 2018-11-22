@@ -7,6 +7,7 @@ This program is able to compare his own results with Jena using the Jena API.
 To use the system : 
 	java -jar [jar_name].jar
 		-queries folder/containing/queries
+		
 		-data file/containing/data/in/rdfxml
 		-output folder/where/exports/are/sent
 		-verbose [optional] : Turns on the verbose mode
